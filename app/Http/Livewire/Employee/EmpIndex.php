@@ -25,12 +25,12 @@ class EmpIndex extends Component
     public $avatar;
 
     public array $filters = [
-        'search'     => '',
-        'status'     => '',
-        'amount_min' => null,
-        'amount_max' => null,
-        'date_start' => null,
-        'date_end'   => null,
+        'search'        => null,
+        'social_status' => null,
+        'amount_min'    => null,
+        'amount_max'    => null,
+        'date_start'    => null,
+        'date_end'      => null,
     ];
 
     public function rules(): array
@@ -115,16 +115,30 @@ class EmpIndex extends Component
     {
         // searching
         $query = Employee::query()
-            ->search('name', $this->filters['search'] ?? null);
+            ->byNameNickName($this->filters['search'] ?? null);
+
+        //filters
+        $query = $query->when($this->filters['social_status'] ?? null, function ($query) {
+            $query->where('social_status', $this->filters['social_status']);
+        });
+
+        $query = $query->when($this->filters['amount_min'] ?? null, function ($query) {
+            $query->where('salary', '>', $this->filters['amount_min']);
+        });
+        $query = $query->when($this->filters['amount_max'] ?? null, function ($query) {
+            $query->where('salary', '<=', $this->filters['amount_max']);
+        });
+        $query = $query->when($this->filters['date_start'] ?? null, function ($query) {
+            $query->whereDate('worked_date', '>', $this->filters['date_start']);
+        });
+        $query = $query->when($this->filters['date_end'] ?? null, function ($query) {
+            $query->where('worked_date', '<=', $this->filters['date_end']);
+        });
 
         // sorting
         $query = $this->applySorting($query);
 
-        //filters
-//        $query = $query->when($this->filters['status'] ?? null, function ($query) {
-//            $query->where('status', $this->filters['status']);
-//        });
-//
+
         return $query;
     }
 

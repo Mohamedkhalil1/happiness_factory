@@ -19,4 +19,18 @@ class SocialStatus extends BaseEnum
             self::MARRIED => __('Married'),
         ];
     }
+
+    public static function getColor($status): string
+    {
+        switch ($status) {
+            case self::SINGLE:
+                return 'success';
+            case self::ENGAGED:
+                return 'warning';
+            case self::MARRIED:
+                return 'danger';
+            default:
+                return '';
+        }
+    }
 }

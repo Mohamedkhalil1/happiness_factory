@@ -39,4 +39,18 @@ class Employee extends Model
         }
         return '';
     }
+
+    public function scopeByNameNickName($query, $searchValue)
+    {
+        return $query->where('name', 'LIKE', '%' . $searchValue . '%')
+            ->orWhere('nickname', 'LIKE', '%' . $searchValue . '%');
+    }
+
+    public function scopeBySocialStatus($query, $searchValue)
+    {
+        if ($searchValue) {
+            return $query;
+        }
+        return $query->where('social_status', $searchValue);
+    }
 }

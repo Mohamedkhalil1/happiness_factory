@@ -80,13 +80,16 @@
                     <x-base.card style="background: #17161621" title="Filters">
                         <x-base.grid>
                             <x-form.form-group col="6">
-                                <x-form.label :required="false" title="Status"/>
-                                <x-form.select
-                                    wire:model="filters.status"
-                                    name="transaction.status"
-                                    :options="\App\Enums\Status::keyValue()"
-                                    selectTitle="Select Status"
-                                />
+                                <x-form.label :required="false" title="Status"></x-form.label>
+                                <x-base.uselect wire:model="filters.social_status">
+                                    <x-select.option value="0">
+                                        Select Social Status
+                                    </x-select.option>
+                                    @foreach(\App\Enums\SocialStatus::keyValue() as $social_status)
+                                        <x-select.option
+                                            value="{{ $social_status['id'] }}">{{ $social_status['name'] }}</x-select.option>
+                                    @endforeach
+                                </x-base.uselect>
                             </x-form.form-group>
 
                             <x-form.form-group col="6">
@@ -130,6 +133,10 @@
                     <x-base.checkbox wire:model="selectedPage"/>
                 </x-table.heading>
 
+                <x-table.heading style="cursor: pointer" wire:click="sortBy('name')" id="name">
+                    Avatar
+                </x-table.heading>
+
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('name')" id="name"
                                  :direction="$sortDirection">
                     Name
@@ -146,6 +153,10 @@
 
                 <x-table.heading>
                     Address
+                </x-table.heading>
+
+                <x-table.heading>
+                    Status
                 </x-table.heading>
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="date"
@@ -167,7 +178,7 @@
 
                 @if($selectedPage)
                     <x-table.row>
-                        <x-table.cell class="text-black" style="background: #4b455042" colspan="7">
+                        <x-table.cell class="text-black" style="background: #4b455042" colspan="9">
                             <div class="text-black">
                                 @unless($selectedAll)
                                     <div>
@@ -196,12 +207,24 @@
                         <x-table.cell>
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
                         </x-table.cell>
+                        <x-table.cell>
+                            @if(isset($model->avatar) && $model->avatar)
+                                <x-base.avatar imageUrl="{{ $model->getAvatar() }}"/>
+                            @endif
+                        </x-table.cell>
                         <x-table.cell>{{ $model->name }}</x-table.cell>
                         <x-table.cell>{{ $model->nickname  }} </x-table.cell>
                         <x-table.cell>{{ $model->phone }}</x-table.cell>
                         <x-table.cell>{{ $model->address }}</x-table.cell>
-                        <x-table.cell>{{ $model->salary }}</x-table.cell>
+                        <x-table.cell>
+                            <x-base.badge type="{{\App\Enums\SocialStatus::getColor($model->social_status)  }}">
+                                {{ \App\Enums\SocialStatus::name($model->social_status) }}
+                            </x-base.badge>
+                        </x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->salary) }}</x-table.cell>
                         <x-table.cell>{{ formatDate($model->worked_date) }}</x-table.cell>
+
+
                         <x-table.cell>
                               <span wire:click="edit({{$model->id}})" style="cursor: pointer"
                                     data-bs-toggle="modal" data-bs-target="#model">
@@ -211,7 +234,7 @@
                     </x-table.row>
                 @empty
                     <x-table.row>
-                        <x-table.cell colspan="7">
+                        <x-table.cell colspan="9">
                             <div class="text-center text-muted text-uppercase">
                                 No employees found...
                             </div>
@@ -302,6 +325,15 @@
                         @endforeach
                     </x-base.uselect>
                 </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label title="Salary"></x-form.label>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input :required="false" lazy="true" name="employee.salary" type="text"
+                                  inputGroupText="EGP"/>
+                </x-form.form-group>
+
                 <div class="col-md-4">
                     <x-form.label title="Details"/>
                 </div>

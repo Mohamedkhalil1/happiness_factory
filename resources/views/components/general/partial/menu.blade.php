@@ -19,6 +19,11 @@
                         'url'    => route('employees.categories.index'),
                         'active' => isActive('employees.categories.index')
                      ],
+                      [
+                        'title'  => 'Employees',
+                        'url'    => route('employees.index'),
+                        'active' => isActive('employees.index')
+                     ],
                 ]
             "></x-menu-item>
 

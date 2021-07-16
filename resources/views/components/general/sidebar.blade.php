@@ -4,7 +4,8 @@
             <div class="d-flex justify-content-between">
                 <div class="logo">
                     <a href="{{ route('dashboard') }}">
-                        <img src='{{asset('assets/images/logo/logo.png')}}' alt="Logo" srcset="">
+                        <img src='{{asset('assets/images/logo/logo.jpg')}}' style="height:6.2rem !important;" alt="Logo"
+                             srcset="">
                     </a>
                 </div>
                 <div class="toggler">
@@ -13,6 +14,6 @@
             </div>
         </div>
         {{--MENU--}}
-        <x-general.partial.menu />
+        <x-general.partial.menu/>
     </div>
 </div>
