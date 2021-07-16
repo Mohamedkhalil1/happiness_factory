@@ -1,5 +1,5 @@
 @props(['name' => ''])
-<select {{ $attributes->merge(['class' => 'form-select']) }}>
+<select {{ $attributes->merge(['class' => "form-select"]) }}>
     {{ $slot }}
 </select>
 

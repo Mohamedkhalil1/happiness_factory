@@ -22,10 +22,6 @@ class Employee extends Model
         'category_id',
         'salary',
     ];
-//
-//    protected $casts = [
-//        'worked_date' => 'date',
-//    ];
 
     public function category()
     {

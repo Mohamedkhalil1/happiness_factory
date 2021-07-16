@@ -33,6 +33,16 @@
     <!-- END GLOBAL MANDATORY STYLES -->
     @livewireStyles
     <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <style>
+        .loading-bar {
+            position: fixed;
+            height: 2px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            z-index: 10000;
+        }
+    </style>
 @stack('head')
 <!-- END PAGE LEVEL PLUGINS -->
 
@@ -41,6 +51,7 @@
 {{--THE BODY--}}
 <body>
 <div id="app">
+    <x-general.progress-bar />
     <x-general.sidebar/>
     <div id="main" class='layout-navbar'>
         <x-general.navbar/>

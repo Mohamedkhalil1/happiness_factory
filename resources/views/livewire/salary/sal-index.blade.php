@@ -1,7 +1,7 @@
 <div>
     @section('title',$pageTitle)
     <x-base.card title="{{ $pageTitle }}">
-        <x-general.progress-bar />
+        <x-general.progress-bar/>
         {{--RIGHT ACTIONS--}}
         <x-base.grid class="mb-3">
             {{--SEARCH--}}
@@ -40,13 +40,11 @@
                     </x-dropdown.item>
                 </x-base.dropdown>
                 {{--PERPAGE PAGINATION--}}
-
                 <x-base.uselect style="float: right; padding: 6px; width:120px" wire:model="perPage">
                     <x-select.option value="10">10 items</x-select.option>
                     <x-select.option value="25">25 items</x-select.option>
                     <x-select.option value="50">50 items</x-select.option>
                 </x-base.uselect>
-
             </x-base.grid-col>
         </x-base.grid>
         <div>
@@ -55,14 +53,14 @@
                     <x-base.card style="background: #17161621" title="Filters">
                         <x-base.grid>
                             <x-form.form-group col="6">
-                                <x-form.label :required="false" title="Soical Status"></x-form.label>
-                                <x-base.uselect wire:model="filters.social_status">
+                                <x-form.label :required="false" title="Status"></x-form.label>
+                                <x-base.uselect wire:model="filters.with">
                                     <x-select.option value="0">
-                                        Select Social Status
+                                        Select Amount Type
                                     </x-select.option>
-                                    @foreach(\App\Enums\SocialStatus::keyValue() as $social_status)
+                                    @foreach(\App\Enums\AmountType::keyValue() as $type)
                                         <x-select.option
-                                            value="{{ $social_status['id'] }}">{{ $social_status['name'] }}</x-select.option>
+                                            value="{{ $type['id'] }}">{{ $type['name'] }}</x-select.option>
                                     @endforeach
                                 </x-base.uselect>
                             </x-form.form-group>
@@ -108,40 +106,36 @@
                     <x-base.checkbox wire:model="selectedPage"/>
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" wire:click="sortBy('name')" id="name">
+                <x-table.heading>
                     Avatar
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('name')" id="name"
-                                 :direction="$sortDirection">
-                    Name
+                <x-table.heading>
+                    Employee
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('nickname')" id="nickname"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('amount')" id="nickname"
                                  :direction="$sortDirection">
-                    Nickname
+                    Amount
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('with')" id="name"
+                                 :direction="$sortDirection">
+                    With
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('with_value')" id="name"
+                                 :direction="$sortDirection">
+                    With amount
                 </x-table.heading>
 
                 <x-table.heading>
-                    Phone
+                    Total
                 </x-table.heading>
 
-                <x-table.heading>
-                    Address
-                </x-table.heading>
-
-                <x-table.heading>
-                    Status
-                </x-table.heading>
-
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="date"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('date')" id="date"
                                  :direction="$sortDirection">
-                    Salary
-                </x-table.heading>
-
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="date"
-                                 :direction="$sortDirection">
-                    Worked Date
+                    Date
                 </x-table.heading>
 
                 <x-table.heading>
@@ -182,22 +176,22 @@
                         <x-table.cell>
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
                         </x-table.cell>
+
                         <x-table.cell>
-                            @if(isset($model->avatar) && $model->avatar)
-                                <x-base.avatar imageUrl="{{ $model->getAvatar() }}"/>
+                            @if(isset($model->employee->avatar) && $model->employee->avatar)
+                                <x-base.avatar imageUrl="{{ $model->employee->getAvatar() }}"/>
                             @endif
                         </x-table.cell>
-                        <x-table.cell>{{ $model->name }}</x-table.cell>
-                        <x-table.cell>{{ $model->nickname  }} </x-table.cell>
-                        <x-table.cell>{{ $model->phone }}</x-table.cell>
-                        <x-table.cell>{{ $model->address }}</x-table.cell>
+                        <x-table.cell>{{ $model->employee->name }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->amount) }}</x-table.cell>
                         <x-table.cell>
-                            <x-base.badge type="{{\App\Enums\SocialStatus::getColor($model->social_status)  }}">
-                                {{ \App\Enums\SocialStatus::name($model->social_status) }}
+                            <x-base.badge type="{{\App\Enums\AmountType::getColor($model->with)  }}">
+                                {{ \App\Enums\AmountType::name($model->with) }}
                             </x-base.badge>
                         </x-table.cell>
-                        <x-table.cell>{{ formatMoney($model->salary) }}</x-table.cell>
-                        <x-table.cell>{{ formatDate($model->worked_date) }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->with_value) }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->total) }}</x-table.cell>
+                        <x-table.cell>{{ formatDate($model->date) }}</x-table.cell>
 
 
                         <x-table.cell>
@@ -211,7 +205,7 @@
                     <x-table.row>
                         <x-table.cell colspan="9">
                             <div class="text-center text-muted text-uppercase">
-                                No employees found...
+                                No transactions found...
                             </div>
                         </x-table.cell>
                     </x-table.row>
@@ -229,102 +223,57 @@
     {{--MODAL User --}}
     <x-base.modal id="model" size="lg" formAction="updateOrCreate">
         <x-slot name="title">
-            Employee
+            Transaction
         </x-slot>
         <x-slot name="content">
             <x-base.grid>
+
                 <div class="col-md-4">
-                    <x-form.label :required="true" title="Name"/>
+                    <x-form.label required title="Date"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input type="text" :required="true" lazy="true" class="round"
-                                  name="employee.name"></x-form.input>
+                    <x-form.date-time required id="date" name="salary.date" type="text"/>
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Nickname"></x-form.label>
+                    <x-form.label required title="Employee"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input lazy="true" name="employee.nickname" type="text"></x-form.input>
-                </x-form.form-group>
-
-                <div class="col-md-4">
-                    <x-form.label title="Phone"></x-form.label>
-                </div>
-                <x-form.form-group col="8">
-                    <x-form.input lazy="true" name="employee.phone" type="number"></x-form.input>
-                </x-form.form-group>
-
-                <div class="col-md-4">
-                    <x-form.label title="Address"></x-form.label>
-                </div>
-                <x-form.form-group col="8">
-                    <x-form.input lazy="true" name="employee.address" type="text"></x-form.input>
-                </x-form.form-group>
-
-                <div class="col-md-4">
-                    <x-form.label title="Worked Date"></x-form.label>
-                </div>
-                <x-form.form-group col="8">
-                    <x-form.date-time id="worked_date" name="employee.worked_date" type="text"/>
-                </x-form.form-group>
-
-                <div class="col-md-4">
-                    <x-form.label title="National ID"></x-form.label>
-                </div>
-                <x-form.form-group col="8">
-                    <x-form.input lazy="true" name="employee.national_id" type="text"></x-form.input>
-                </x-form.form-group>
-
-                <div class="col-md-4">
-                    <x-form.label title="Status"></x-form.label>
-                </div>
-
-                <x-form.form-group col="8">
-                    <x-base.uselect name="employee.social_status" wire:model="employee.social_status">
-                        <x-select.option value="0">select social status</x-select.option>
-                        @foreach(\App\Enums\SocialStatus::keyValue() as $status)
-                            <x-select.option value="{{ $status['id'] }}">{{ $status['name'] }}</x-select.option>
+                    <x-base.uselect required name="salary.employee_id" wire:model="salary.employee_id">
+                        <x-select.option value="0">select employee</x-select.option>
+                        @foreach($employees as $employee)
+                                <x-select.option value="{{ $employee->id }}">{{ $employee->name }}</x-select.option>
                         @endforeach
                     </x-base.uselect>
                 </x-form.form-group>
 
-                <div class="col-md-4">
-                    <x-form.label title="Category"></x-form.label>
-                </div>
-                <x-form.form-group col="8">
-                    <x-base.uselect name="employee.category_id" wire:model="employee.category_id">
-                        <x-select.option value="0">select category</x-select.option>
-                        @foreach($categories as $category)
-                            <x-select.option value="{{ $category->id }}">{{ $category->name }}</x-select.option>
-                        @endforeach
-                    </x-base.uselect>
-                </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Salary"></x-form.label>
+                    <x-form.label required title="Amount"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input :required="false" lazy="true" name="employee.salary" type="text"
+                    <x-form.input required lazy="true" name="salary.amount" type="text"
                                   inputGroupText="EGP"/>
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Details"/>
+                    <x-form.label required title="With"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.textarea wire:model="employee.details" title="details"/>
+                    <x-base.uselect name="salary.with" wire:model="salary.with">
+                        <x-select.option value="0">select amount type</x-select.option>
+                        @foreach(\App\Enums\AmountType::keyValue() as $type)
+                            <x-select.option value="{{ $type['id'] }}">{{ $type['name'] }}</x-select.option>
+                        @endforeach
+                    </x-base.uselect>
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Avatar"/>
-                    @if(isset($employee->avatar) && $employee->avatar)
-                        <x-base.avatar imageUrl="{{ $employee->getAvatar() }}"/>
-                    @endif
+                    <x-form.label title="With Amount"></x-form.label>
                 </div>
-
                 <x-form.form-group col="8">
-                    <x-form.upload-photo name="avatar"/>
+                    <x-form.input lazy="true" name="salary.with_value" type="text"
+                                  inputGroupText="EGP"/>
                 </x-form.form-group>
 
             </x-base.grid>

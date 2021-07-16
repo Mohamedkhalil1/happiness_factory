@@ -7,6 +7,7 @@ use App\Http\Livewire\CategoryEmploye\Index as CategoryIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
 use App\Http\Livewire\Profile\Show;
+use App\Http\Livewire\Salary\SalIndex;
 use App\Http\Livewire\Transaction\AdvancedIndex;
 use App\Http\Livewire\Transaction\Index;
 use App\Http\Livewire\User\Create;
@@ -47,6 +48,7 @@ Route::group([
 ], function () {
     Route::get('/', EmpIndex::class)->name('index');
     Route::get('/categories', CategoryIndex::class)->name('categories.index');
+    Route::get('/salaries', SalIndex::class)->name('salaries.index');
 });
 
 

@@ -18,12 +18,17 @@
                         'title'  => 'Categories',
                         'url'    => route('employees.categories.index'),
                         'active' => isActive('employees.categories.index')
-                     ],
-                      [
+                    ],
+                    [
                         'title'  => 'Employees',
                         'url'    => route('employees.index'),
                         'active' => isActive('employees.index')
-                     ],
+                    ],
+                     [
+                        'title'  => 'Salaries',
+                        'url'    => route('employees.salaries.index'),
+                        'active' => isActive('employees.salaries.index')
+                    ],
                 ]
             "></x-menu-item>
 
