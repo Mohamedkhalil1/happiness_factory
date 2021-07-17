@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire\Product;
 
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Season;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -40,6 +42,7 @@ class ProCreate extends Component
         ];
     }
 
+
     public function showInventories()
     {
         $this->inventories = [];
@@ -51,6 +54,7 @@ class ProCreate extends Component
     //CPD
     public function getCombinations($arrays)
     {
+        $this->images = [];
         $result = [[]];
         foreach ($arrays as $property => $property_values) {
             $tmp = [];
@@ -70,7 +74,7 @@ class ProCreate extends Component
             $variant = '';
         }
         $this->showCloseProductsCards = true;
-        $this->notify('product is declared successfully');
+//        $this->notify('product is declared successfully');
     }
 
     public function removeItem($title)
@@ -81,9 +85,52 @@ class ProCreate extends Component
         $this->notify('product is removed successfully', '#dc3545');
     }
 
+    public function createInventories()
+    {
+        DB::beginTransaction();
+        $this->validate();
+        $this->createProduct();
+        $this->validate([
+            'images'       => 'required|array',
+            'images.*'     => 'required|image',
+            'prices'       => 'required|array',
+            'prices.*'     => 'required|numeric|max:99999999',
+            'quantities'   => 'required|array',
+            'quantities.*' => 'required|numeric|max:99999999',
+        ]);
+        foreach ($this->inventories as $inventory) {
+            $price = $this->prices[$inventory];
+            $quantity = $this->quantities[$inventory];
+            $image = $this->images[$inventory];
+            $this->createInventory($inventory, $price, $quantity, $image);
+        }
+        DB::commit();
+        $this->notify('Product created successfully');
+        return redirect()->route('products.categories.index');
+    }
+
     public function notify($message = 'saved', $color = "#4fbe87")
     {
         $this->dispatchBrowserEvent('notify', ['message' => $message, 'color' => $color]);
+    }
+
+    private function createProduct()
+    {
+        $this->product->save();
+    }
+
+    private function createInventory($inventory, $price, $quantity, $image)
+    {
+        $colorSize = explode('/', $inventory);
+        $color = $colorSize[0] ?? '';
+        $size = $colorSize[1] ?? '';
+        Inventory::create([
+            'price'      => $price,
+            'quantity'   => $quantity,
+            'color'      => $color,
+            'size'       => $size,
+            'product_id' => $this->product->id,
+        ]);
     }
 
     public function render()

@@ -1,6 +1,6 @@
 <div>
     @section('title',$pageTitle)
-    <x-form.form action="showInventories">
+    <x-form.form action="createInventories">
         <x-base.card title="{{$pageTitle}}">
             <x-form.form-group col="12">
                 <x-form.label required title="Name"/>
@@ -10,7 +10,7 @@
             <x-form.form-group col="6">
                 <x-form.label required title="Category"/>
                 <x-base.uselect name="product.category_id" wire:model="product.category_id">
-                    <x-select.option value="0">Select Categories</x-select.option>
+                    <x-select.option value="0">Select Category</x-select.option>
                     @foreach($categories as $category)
                         <x-select.option value="{{ $category->id }}">{{ $category->name }}</x-select.option>
                     @endforeach
@@ -54,16 +54,27 @@
             <x-base.grid>
                 @foreach($inventories as $inventory)
                     <x-base.grid-col>
+
                         <x-base.card title="{{ $inventory }}">
                             <x-card.content>
-                                <x-form.form-group col="12">
-                                    @if(!isset($images[$inventory]))
-                                        <input type="file" wire:model="images.{{ $inventory }}"/>
-                                    @endif
-                                    <img class="card-img-top img-fluid"
-                                         style="height:100px;width: auto;"
-                                         src="{{ isset($images[$inventory]) ? $images[$inventory]->temporaryUrl() : '' }}"/>
+                                <x-base.button wire:click="removeItem('{{$inventory}}')" style="float:right"
+                                               class="danger me-1 mb-1">
+                                    <x-icons.cut/>
+                                </x-base.button>
+                                <x-form.form-group col="10">
+                                    <input type="file" wire:model="images.{{ $inventory }}"/>
+                                    <span class="text-danger" style="display: inline-block">
+                                            @error("images") {{ $message }} @enderror
+                                        </span>
+                                    <span class="text-danger" style="display: inline-block">
+                                           @error("images.$inventory") {{ $message }} @enderror
+                                        </span>
+                                    @isset($images[$inventory])
+                                        <img class="card-img-top img-fluid center"
+                                             src="{{ isset($images[$inventory]) ? $images[$inventory]->temporaryUrl() : '' }}"/>
+                                    @endisset
                                 </x-form.form-group>
+
                                 <x-card.body>
                                     {{--                                            <x-card.title>--}}
                                     {{--                                                {{ $inventory }}--}}
@@ -88,8 +99,27 @@
                 @endforeach
             </x-base.grid>
         @endif
+        <div>
+            @if($showCloseProductsCards)
+                <div class="col-sm-12 d-flex justify-content-end">
+                    <x-base.button type="submit" class="primary me-1 mb-1">
+                        Save
+                    </x-base.button>
+                </div>
+            @endif
+        </div>
 
     </x-form.form>
-
-
 </div>
+
+@push('head')
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            height: 150px;
+            width: auto;
+        }
+    </style>
+@endpush
