@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Livewire\Attendance\AttIndex;
 use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\CategoryEmploye\Index as CategoryIndex;
@@ -49,6 +50,7 @@ Route::group([
     Route::get('/', EmpIndex::class)->name('index');
     Route::get('/categories', CategoryIndex::class)->name('categories.index');
     Route::get('/salaries', SalIndex::class)->name('salaries.index');
+    Route::get('/attendances', AttIndex::class)->name('attendances.index');
 });
 
 

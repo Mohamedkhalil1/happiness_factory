@@ -29,6 +29,11 @@
                         'url'    => route('employees.salaries.index'),
                         'active' => isActive('employees.salaries.index')
                     ],
+                    [
+                        'title'  => 'Attendances',
+                        'url'    => route('employees.attendances.index'),
+                        'active' => isActive('employees.attendances.index')
+                    ],
                 ]
             "></x-menu-item>
 
