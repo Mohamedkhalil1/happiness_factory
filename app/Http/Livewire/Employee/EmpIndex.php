@@ -2,12 +2,16 @@
 
 namespace App\Http\Livewire\Employee;
 
+use App\Enums\AttendanceTypes;
+use App\Enums\EmployeeType;
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
+use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\EmployeesCategory;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -20,8 +24,10 @@ class EmpIndex extends Component
     public bool $showAdvancedSearch = false;
     public $categories;
     public Employee $employee;
+    public Attendance $attendance;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['resfreshEmployees', '$refresh'];
+
     public $avatar;
 
     public array $filters = [
@@ -32,6 +38,7 @@ class EmpIndex extends Component
         'date_start'    => null,
         'date_end'      => null,
         'type'          => null,
+        'category_id'   => null,
     ];
 
     public function rules(): array
@@ -48,8 +55,9 @@ class EmpIndex extends Component
             'employee.details'       => 'nullable|string|max:64000',
             'employee.category_id'   => 'required|integer|exists:employees_categories,id',
             'employee.salary'        => 'nullable|integer|max:6400000',
-            'employee.avatar'        => ['nullable'],
-            'avatar'                 => ['nullable', 'image', 'max:1048'],
+            'employee.avatar'        => 'nullable',
+            'avatar'                 => 'nullable|image|max:1048',
+            'attendance.date'        => 'nullable|date',
         ];
     }
 
@@ -88,10 +96,47 @@ class EmpIndex extends Component
         $this->employee = new Employee();
     }
 
+    public function createAttendance()
+    {
+        $this->useCachedRows();
+        $this->attendance = new Attendance();
+    }
+
+
+    public function storeAttendance()
+    {
+        DB::beginTransaction();
+        foreach ($this->selected as $employeId) {
+            $this->makeAttendance($employeId, AttendanceTypes::ATTENDED);
+        }
+        $employeesIds = Employee::query()
+            ->where('type', EmployeeType::FULL_TIME)
+            ->whereNotin('id', $this->selected)
+            ->get()
+            ->pluck('id');
+
+        foreach ($employeesIds as $employeId) {
+            $this->makeAttendance($employeId, AttendanceTypes::ABSENT);
+        }
+        $this->notify('Attendance has been saved successfully.');
+        DB::commit();
+    }
+
+    private function makeAttendance($employeId, $attended)
+    {
+
+        Attendance::create([
+            'date'        => $this->attendance->date,
+            'employee_id' => $employeId,
+            'attended'    => $attended,
+        ]);
+    }
+
     public function updateOrCreate()
     {
         $this->validate();
         $this->avatar && $this->employee->avatar = $this->avatar->store('/', 'files');
+
         $this->employee->save();
         $this->notify('Employee has been saved successfully!');
     }
@@ -117,8 +162,8 @@ class EmpIndex extends Component
     {
         // searching
         $query = Employee::query()
+            ->with('category')
             ->byNameNickName($this->filters['search'] ?? null);
-
         //filters
         $query = $query->when($this->filters['social_status'] ?? null, function ($query) {
             $query->where('social_status', $this->filters['social_status']);
@@ -140,10 +185,11 @@ class EmpIndex extends Component
             $query->where('type', $this->filters['type']);
         });
 
+        $query = $query->when($this->filters['category_id'] ?? null, function ($query) {
+            $query->where('category_id', $this->filters['category_id']);
+        });
         // sorting
         $query = $this->applySorting($query);
-
-
         return $query;
     }
 

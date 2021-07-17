@@ -26,7 +26,7 @@ class Employee extends Model
 
     public function category()
     {
-        $this->belongsTo(EmployeesCategory::class, 'category_id');
+        return $this->belongsTo(EmployeesCategory::class, 'category_id');
     }
 
     public function getAvatar(): string

@@ -7,7 +7,7 @@
             {{--SEARCH--}}
             <x-base.grid-col col="3">
                 <x-form.input lazy="true" type="text" class="round" name="filters.search"
-                              placeholder="Search employee name...">
+                              placeholder="search employee name...">
                 </x-form.input>
             </x-base.grid-col>
             {{--ADVANCED SEARCH--}}
@@ -37,6 +37,12 @@
                         <span style="cursor: pointer" class="text-muted"
                               onclick="confirm('are you sure ?') || event.stopImmediatePropagation()"
                               wire:click="deleteSelected">Delete</span>
+                    </x-dropdown.item>
+                    <x-dropdown.item>
+                        <x-icons.user-tie class="text-muted"/>
+                        <span wire:click="createAttendance" style="cursor: pointer" class="text-muted"
+                              data-bs-toggle="modal"
+                              data-bs-target="#attendance">Attendance</span>
                     </x-dropdown.item>
                 </x-base.dropdown>
                 {{--PERPAGE PAGINATION--}}
@@ -76,6 +82,19 @@
                                     @foreach(\App\Enums\EmployeeType::keyValue() as $type)
                                         <x-select.option
                                             value="{{ $type['id'] }}">{{ $type['name'] }}</x-select.option>
+                                    @endforeach
+                                </x-base.uselect>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Category"></x-form.label>
+                                <x-base.uselect wire:model="filters.category_id">
+                                    <x-select.option value="0">
+                                        Select Category
+                                    </x-select.option>
+                                    @foreach($categories as $category)
+                                        <x-select.option
+                                            value="{{ $category->id }}">{{ $category->name }}</x-select.option>
                                     @endforeach
                                 </x-base.uselect>
                             </x-form.form-group>
@@ -121,7 +140,7 @@
                     <x-base.checkbox wire:model="selectedPage"/>
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" wire:click="sortBy('name')" id="name">
+                <x-table.heading>
                     Avatar
                 </x-table.heading>
 
@@ -130,11 +149,7 @@
                     Name
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('nickname')" id="nickname"
-                                 :direction="$sortDirection">
-                    Nick
-                </x-table.heading>
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('is_full_time')" id="is_full_time"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('type')" id="type"
                                  :direction="$sortDirection">
                     Type
                 </x-table.heading>
@@ -149,6 +164,10 @@
 
                 <x-table.heading>
                     Status
+                </x-table.heading>
+
+                <x-table.heading>
+                    Category
                 </x-table.heading>
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="salary"
@@ -170,7 +189,7 @@
 
                 @if($selectedPage)
                     <x-table.row>
-                        <x-table.cell class="text-black" style="background: #4b455042" colspan="9">
+                        <x-table.cell class="text-black" style="background: #4b455042" colspan="11">
                             <div class="text-black">
                                 @unless($selectedAll)
                                     <div>
@@ -204,8 +223,11 @@
                                 <x-base.avatar imageUrl="{{ $model->getAvatar() }}"/>
                             @endif
                         </x-table.cell>
-                        <x-table.cell>{{ $model->name }}</x-table.cell>
-                        <x-table.cell>{{ $model->nickname  }} </x-table.cell>
+                        <x-table.cell>
+                            {{ $model->name }}
+                            <br>
+                            <span class="text-muted text-sm">({{ $model->nickname }})</span>
+                        </x-table.cell>
                         <x-table.cell>
                             <x-base.badge type="{{\App\Enums\EmployeeType::getColor($model->type)  }}">
                                 {{ \App\Enums\EmployeeType::name($model->type) }}
@@ -218,6 +240,7 @@
                                 {{ \App\Enums\SocialStatus::name($model->social_status) }}
                             </x-base.badge>
                         </x-table.cell>
+                        <x-table.cell>{{ $model->category->name ?? '' }}</x-table.cell>
                         <x-table.cell>{{ formatMoney($model->salary) }}</x-table.cell>
                         <x-table.cell>{{ formatDate($model->worked_date) }}</x-table.cell>
 
@@ -231,7 +254,7 @@
                     </x-table.row>
                 @empty
                     <x-table.row>
-                        <x-table.cell colspan="9">
+                        <x-table.cell colspan="11">
                             <div class="text-center text-muted text-uppercase">
                                 No employees found...
                             </div>
@@ -271,10 +294,10 @@
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label required title="Nickname"></x-form.label>
+                    <x-form.label required title="Type"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="employee.is_full_time" wire:model="employee.type">
+                    <x-base.uselect name="employee.type" wire:model="employee.type">
                         <x-select.option value="0">Select Employee Type</x-select.option>
                         @foreach(\App\Enums\EmployeeType::keyValue() as $status)
                             <x-select.option value="{{ $status['id'] }}">{{ $status['name'] }}</x-select.option>
@@ -368,6 +391,25 @@
         </x-slot>
     </x-base.modal>
 
+
+    <x-base.modal id="attendance" size="lg" formAction="storeAttendance">
+        <x-slot name="title">
+            Employee
+        </x-slot>
+        <x-slot name="content">
+            <x-base.grid>
+                <div class="col-md-4">
+                    <x-form.label title="Date"></x-form.label>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.date-time id="date" name="attendance.date" type="text"/>
+                </x-form.form-group>
+            </x-base.grid>
+        </x-slot>
+        <x-slot name="footer">
+            <x-base.button type="submit" @click="document.getElementById('form-id').submit()">Save</x-base.button>
+        </x-slot>
+    </x-base.modal>
 </div>
 
 
