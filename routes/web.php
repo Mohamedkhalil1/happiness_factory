@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Livewire\Attendance\AttIndex;
 use App\Http\Livewire\Auth\Login;
@@ -7,8 +8,11 @@ use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\CategoryEmploye\Index as CategoryIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
+use App\Http\Livewire\Product\ProCreate;
+use App\Http\Livewire\ProductCategory\PCatIndex;
 use App\Http\Livewire\Profile\Show;
 use App\Http\Livewire\Salary\SalIndex;
+use App\Http\Livewire\Season\SeaIndex;
 use App\Http\Livewire\Transaction\AdvancedIndex;
 use App\Http\Livewire\Transaction\Index;
 use App\Http\Livewire\User\Create;
@@ -32,6 +36,7 @@ Route::group([
     Route::get('/register', Register::class)->name('register');
 });
 
+
 Route::group([
     'middleware' => 'auth',
 ], function () {
@@ -40,19 +45,28 @@ Route::group([
     Route::get('/user/create', Create::class)->name('user.create');
     Route::get('/transactions', Index::class)->name('transaction.index');
     Route::get('/transactions/advanced', AdvancedIndex::class)->name('transaction.advanced-index');
-});
+    Route::group([
 
-Route::group([
-    'middleware' => 'auth',
-    'prefix'     => 'employees',
-    'as'         => 'employees.',
-], function () {
-    Route::get('/', EmpIndex::class)->name('index');
-    Route::get('/categories', CategoryIndex::class)->name('categories.index');
-    Route::get('/salaries', SalIndex::class)->name('salaries.index');
-    Route::get('/attendances', AttIndex::class)->name('attendances.index');
-});
+        'prefix' => 'employees',
+        'as'     => 'employees.',
+    ], function () {
+        Route::get('/', EmpIndex::class)->name('index');
+        Route::get('/categories', CategoryIndex::class)->name('categories.index');
+        Route::get('/salaries', SalIndex::class)->name('salaries.index');
+        Route::get('/attendances', AttIndex::class)->name('attendances.index');
+    });
 
+    Route::group([
+
+        'prefix' => 'products',
+        'as'     => 'products.',
+    ], function () {
+        Route::get('/create', ProCreate::class)->name('create');
+        Route::get('/categories', PCatIndex::class)->name('categories.index');
+    });
+
+    Route::get('/seasons', SeaIndex::class)->name('seasons.index');
+});
 
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 

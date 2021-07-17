@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Livewire\CategoryEmploye;
+namespace App\Http\Livewire\ProductCategory;
 
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
-use App\Models\EmployeesCategory;
+use App\Models\ProductCategory;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class Index extends Component
+class PCatIndex extends Component
 {
     use WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
     public string $pageTitle = 'Categories';
-    public EmployeesCategory $category;
+    public ProductCategory $category;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshCategories', '$refresh'];
     public array $filters = [
@@ -51,13 +52,14 @@ class Index extends Component
         $this->selectedPage = false;
         $this->selectedAll = false;
         $this->resetPage();
+        $this->category = new ProductCategory();
         $this->notify('Categories has been deleted successfully!');
     }
 
     public function edit($categoryId)
     {
         $this->useCachedRows();
-        $this->category = EmployeesCategory::find($categoryId);
+        $this->category = ProductCategory::find($categoryId);
         if (!$this->category) {
             $this->notify('Category is not found!', "#ff8888");
         }
@@ -66,7 +68,7 @@ class Index extends Component
     public function create()
     {
         $this->useCachedRows();
-        $this->category = new EmployeesCategory();
+        $this->category = new ProductCategory();
     }
 
     public function updateOrCreate()
@@ -89,7 +91,7 @@ class Index extends Component
     #use cashing in the same request
     public function getRowsQueryProperty()
     {
-        $query = EmployeesCategory::query()
+        $query = ProductCategory::query()
             ->search('name', $this->filters['search'] ?? null);
         return $this->applySorting($query);
     }
@@ -107,7 +109,7 @@ class Index extends Component
             $this->selectPageRows();
         }
 
-        return view('livewire.category-employe.index', [
+        return view('livewire.product-category.p-cat-index', [
             'models' => $this->rows,
         ])
             ->extends('layouts.app')
