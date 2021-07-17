@@ -55,7 +55,7 @@
                     <x-base.card style="background: #17161621" title="Filters">
                         <x-base.grid>
                             <x-form.form-group col="6">
-                                <x-form.label :required="false" title="Soical Status"></x-form.label>
+                                <x-form.label :required="false" title="Social Status"></x-form.label>
                                 <x-base.uselect wire:model="filters.social_status">
                                     <x-select.option value="0">
                                         Select Social Status
@@ -63,6 +63,19 @@
                                     @foreach(\App\Enums\SocialStatus::keyValue() as $social_status)
                                         <x-select.option
                                             value="{{ $social_status['id'] }}">{{ $social_status['name'] }}</x-select.option>
+                                    @endforeach
+                                </x-base.uselect>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Type"></x-form.label>
+                                <x-base.uselect wire:model="filters.is_full_time">
+                                    <x-select.option value="0">
+                                        Select Employee Type
+                                    </x-select.option>
+                                    @foreach(\App\Enums\EmployeeType::keyValue() as $type)
+                                        <x-select.option
+                                            value="{{ $type['id'] }}">{{ $type['name'] }}</x-select.option>
                                     @endforeach
                                 </x-base.uselect>
                             </x-form.form-group>
@@ -119,7 +132,11 @@
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('nickname')" id="nickname"
                                  :direction="$sortDirection">
-                    Nickname
+                    Nick
+                </x-table.heading>
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('is_full_time')" id="is_full_time"
+                                 :direction="$sortDirection">
+                    Type
                 </x-table.heading>
 
                 <x-table.heading>
@@ -134,12 +151,12 @@
                     Status
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="date"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="salary"
                                  :direction="$sortDirection">
                     Salary
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="date"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="worked_date"
                                  :direction="$sortDirection">
                     Worked Date
                 </x-table.heading>
@@ -189,6 +206,11 @@
                         </x-table.cell>
                         <x-table.cell>{{ $model->name }}</x-table.cell>
                         <x-table.cell>{{ $model->nickname  }} </x-table.cell>
+                        <x-table.cell>
+                            <x-base.badge type="{{\App\Enums\EmployeeType::getColor($model->is_full_time)  }}">
+                                {{ \App\Enums\EmployeeType::name($model->is_full_time) }}
+                            </x-base.badge>
+                        </x-table.cell>
                         <x-table.cell>{{ $model->phone }}</x-table.cell>
                         <x-table.cell>{{ $model->address }}</x-table.cell>
                         <x-table.cell>
@@ -249,6 +271,18 @@
                 </x-form.form-group>
 
                 <div class="col-md-4">
+                    <x-form.label required title="Nickname"></x-form.label>
+                </div>
+                <x-form.form-group col="8">
+                    <x-base.uselect name="employee.is_full_time" wire:model="employee.is_full_time">
+                        <x-select.option value="0">Select Employee Type</x-select.option>
+                        @foreach(\App\Enums\EmployeeType::keyValue() as $status)
+                            <x-select.option value="{{ $status['id'] }}">{{ $status['name'] }}</x-select.option>
+                        @endforeach
+                    </x-base.uselect>
+                </x-form.form-group>
+
+                <div class="col-md-4">
                     <x-form.label title="Phone"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
@@ -282,7 +316,7 @@
 
                 <x-form.form-group col="8">
                     <x-base.uselect name="employee.social_status" wire:model="employee.social_status">
-                        <x-select.option value="0">select social status</x-select.option>
+                        <x-select.option value="0">Select Social Status</x-select.option>
                         @foreach(\App\Enums\SocialStatus::keyValue() as $status)
                             <x-select.option value="{{ $status['id'] }}">{{ $status['name'] }}</x-select.option>
                         @endforeach
@@ -294,7 +328,7 @@
                 </div>
                 <x-form.form-group col="8">
                     <x-base.uselect name="employee.category_id" wire:model="employee.category_id">
-                        <x-select.option value="0">select category</x-select.option>
+                        <x-select.option value="0">Select Category</x-select.option>
                         @foreach($categories as $category)
                             <x-select.option value="{{ $category->id }}">{{ $category->name }}</x-select.option>
                         @endforeach

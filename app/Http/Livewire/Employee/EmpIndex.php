@@ -31,12 +31,14 @@ class EmpIndex extends Component
         'amount_max'    => null,
         'date_start'    => null,
         'date_end'      => null,
+        'is_full_time'  => null,
     ];
 
     public function rules(): array
     {
         return [
             'employee.name'          => 'required',
+            'employee.is_full_time'  => 'required|between:1,2',
             'employee.nickname'      => 'nullable|string|max:255',
             'employee.address'       => 'nullable|string|max:255',
             'employee.phone'         => 'nullable|numeric',
@@ -133,6 +135,9 @@ class EmpIndex extends Component
         });
         $query = $query->when($this->filters['date_end'] ?? null, function ($query) {
             $query->where('worked_date', '<=', $this->filters['date_end']);
+        });
+        $query = $query->when($this->filters['is_full_time'] ?? null, function ($query) {
+            $query->where('is_full_time', $this->filters['is_full_time']);
         });
 
         // sorting

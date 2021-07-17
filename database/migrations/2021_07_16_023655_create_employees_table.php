@@ -11,6 +11,7 @@ class CreateEmployeesTable extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique()->index();
+            $table->string('is_full_time')->default(1);
             $table->string('nickname')->index()->nullable();
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
