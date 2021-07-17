@@ -69,7 +69,7 @@
 
                             <x-form.form-group col="6">
                                 <x-form.label title="Type"></x-form.label>
-                                <x-base.uselect wire:model="filters.is_full_time">
+                                <x-base.uselect wire:model="filters.type">
                                     <x-select.option value="0">
                                         Select Employee Type
                                     </x-select.option>
@@ -207,8 +207,8 @@
                         <x-table.cell>{{ $model->name }}</x-table.cell>
                         <x-table.cell>{{ $model->nickname  }} </x-table.cell>
                         <x-table.cell>
-                            <x-base.badge type="{{\App\Enums\EmployeeType::getColor($model->is_full_time)  }}">
-                                {{ \App\Enums\EmployeeType::name($model->is_full_time) }}
+                            <x-base.badge type="{{\App\Enums\EmployeeType::getColor($model->type)  }}">
+                                {{ \App\Enums\EmployeeType::name($model->type) }}
                             </x-base.badge>
                         </x-table.cell>
                         <x-table.cell>{{ $model->phone }}</x-table.cell>
@@ -274,7 +274,7 @@
                     <x-form.label required title="Nickname"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="employee.is_full_time" wire:model="employee.is_full_time">
+                    <x-base.uselect name="employee.is_full_time" wire:model="employee.type">
                         <x-select.option value="0">Select Employee Type</x-select.option>
                         @foreach(\App\Enums\EmployeeType::keyValue() as $status)
                             <x-select.option value="{{ $status['id'] }}">{{ $status['name'] }}</x-select.option>

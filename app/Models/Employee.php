@@ -21,7 +21,7 @@ class Employee extends Model
         'details',
         'category_id',
         'salary',
-        'is_full_time',
+        'type',
     ];
 
     public function category()
