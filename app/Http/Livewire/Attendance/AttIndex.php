@@ -102,6 +102,12 @@ class AttIndex extends Component
         // searching
         $query = Attendance::with('employee');
 
+        $query->when($this->filters['search'] ?? null, function ($query) {
+            $query->whereHas('employee', function ($query) {
+                return $query->byNameNickName($this->filters['search']);
+            });
+        });
+
         //filters
         $query = $query->when($this->filters['status'] ?? null, function ($query) {
             $query->where('attended', $this->filters['status']);
