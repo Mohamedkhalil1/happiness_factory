@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Http\Livewire\CategoryEmploye;
+namespace App\Http\Livewire\Season;
 
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
-use App\Models\EmployeesCategory;
+use App\Models\Season;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class Index extends Component
+class SeaIndex extends Component
 {
     use WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
-    public string $pageTitle = 'Categories';
-    public EmployeesCategory $category;
+    public string $pageTitle = 'Seasons';
+    public Season $season;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshCategories', '$refresh'];
     public array $filters = [
@@ -25,8 +25,8 @@ class Index extends Component
     public function rules(): array
     {
         return [
-            'category.name'        => 'required|string|max:255',
-            'category.description' => 'nullable|string|max:640000',
+            'season.name'        => 'required|string|max:255',
+            'season.description' => 'nullable|string|max:640000',
         ];
     }
 
@@ -51,29 +51,29 @@ class Index extends Component
         $this->selectedPage = false;
         $this->selectedAll = false;
         $this->resetPage();
-        $this->notify('Categories has been deleted successfully!');
+        $this->notify('Seasons has been deleted successfully!');
     }
 
-    public function edit($categoryId)
+    public function edit($seasonId)
     {
         $this->useCachedRows();
-        $this->category = EmployeesCategory::find($categoryId);
-        if (!$this->category) {
-            $this->notify('Category is not found!', "#ff8888");
+        $this->season = Season::find($seasonId);
+        if (!$this->season) {
+            $this->notify('Season is not found!', "#ff8888");
         }
     }
 
     public function create()
     {
         $this->useCachedRows();
-        $this->category = new EmployeesCategory();
+        $this->season = new Season();
     }
 
     public function updateOrCreate()
     {
         $this->validate();
-        $this->category->save();
-        $this->notify('Category has been saved successfully!');
+        $this->season->save();
+        $this->notify('Season has been saved successfully!');
     }
 
     public function resetFilters()
@@ -89,7 +89,7 @@ class Index extends Component
     #use cashing in the same request
     public function getRowsQueryProperty()
     {
-        $query = EmployeesCategory::query()
+        $query = Season::query()
             ->search('name', $this->filters['search'] ?? null);
         return $this->applySorting($query);
     }
@@ -107,7 +107,7 @@ class Index extends Component
             $this->selectPageRows();
         }
 
-        return view('livewire.category-employe.index', [
+        return view('livewire.season.sea-index', [
             'models' => $this->rows,
         ])
             ->extends('layouts.app')

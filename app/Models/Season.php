@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EmployeesCategory extends Model
+class Season extends Model
 {
     use HasFactory;
 
@@ -13,4 +13,5 @@ class EmployeesCategory extends Model
         'name',
         'description',
     ];
+
 }

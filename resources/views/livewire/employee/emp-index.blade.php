@@ -1,7 +1,7 @@
 <div>
     @section('title',$pageTitle)
     <x-base.card title="{{ $pageTitle }}">
-        <x-general.progress-bar />
+        <x-general.progress-bar/>
         {{--RIGHT ACTIONS--}}
         <x-base.grid class="mb-3">
             {{--SEARCH--}}
@@ -264,11 +264,7 @@
             </x-slot>
         </x-base.table>
         <div>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination pagination-primary">
-                    {{ $models->links() }}
-                </ul>
-            </nav>
+            {{ $models->links() }}
         </div>
     </x-base.card>
     {{--MODAL User --}}

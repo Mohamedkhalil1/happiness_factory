@@ -9,6 +9,38 @@
             :isSingle="true"></x-menu-item>
 
         <x-menu-item
+            title="Seasons"
+            icon="bi bi-stack"
+            url="{{ route('seasons.index') }}"
+            isActive="{{ isActive('seasons.index') }}"
+            :isSingle="true"></x-menu-item>
+
+
+        <x-menu-item
+            title="Products"
+            icon="bi bi-collection-fill"
+            :isSingle="false"
+            :items="
+                [
+                    [
+                        'title'  => 'Products',
+                        'url'    => route('products.index'),
+                        'active' => isActive('products.index') || isActive('products.create')
+                    ],
+                    [
+                        'title'  => 'Inventories',
+                        'url'    => route('inventories.index'),
+                        'active' => isActive('inventories.index')
+                    ],
+                    [
+                        'title'  => 'Categories',
+                        'url'    => route('products.categories.index'),
+                        'active' => isActive('products.categories.index')
+                    ],
+                ]
+            "></x-menu-item>
+
+        <x-menu-item
             title="Employees"
             icon="bi bi-person-fill"
             :isSingle="false"

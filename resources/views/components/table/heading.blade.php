@@ -1,6 +1,6 @@
 @props(['sortable' => false , 'direction'])
 
-<th {{ $attributes->merge(['class' => 'table-light text-muted text-sm text-uppercase']) }}>
+<th {{ $attributes->merge(['class' => 'text-muted table-light text-sm text-uppercase']) }}>
     {{ $slot }}
     @if($sortable)
         @if( $direction == 'asc')

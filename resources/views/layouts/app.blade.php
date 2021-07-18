@@ -15,7 +15,7 @@
     <meta content="Designfy" name="author"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
-{{--    <link rel="shortcut icon" href="{{asset('assets/images/logo/logo.png')}}" type="image/x-icon">--}}
+    {{--    <link rel="shortcut icon" href="{{asset('assets/images/logo/logo.png')}}" type="image/x-icon">--}}
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href=" {{asset('assets/css/bootstrap.css')}}">
@@ -51,7 +51,6 @@
 {{--THE BODY--}}
 <body>
 <div id="app">
-    <x-general.progress-bar />
     <x-general.sidebar/>
     <div id="main" class='layout-navbar'>
         <x-general.navbar/>
