@@ -6,6 +6,7 @@ use App\Http\Livewire\Attendance\AttIndex;
 use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\CategoryEmploye\Index as CategoryIndex;
+use App\Http\Livewire\Client\CliIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
 use App\Http\Livewire\Inventory\InvIndex;
@@ -74,6 +75,14 @@ Route::group([
     ], function () {
         Route::get('/', InvIndex::class)->name('index');
     });
+
+    Route::group([
+        'prefix' => 'clients',
+        'as'     => 'clients.',
+    ], function () {
+        Route::get('/', CliIndex::class)->name('index');
+    });
+
 
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');
 });

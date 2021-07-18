@@ -9,12 +9,18 @@
             :isSingle="true"></x-menu-item>
 
         <x-menu-item
-            title="Seasons"
-            icon="bi bi-stack"
-            url="{{ route('seasons.index') }}"
-            isActive="{{ isActive('seasons.index') }}"
-            :isSingle="true"></x-menu-item>
-
+            title="Client"
+            icon="bi bi-person-badge-fill"
+            :isSingle="false"
+            :items="
+                [
+                    [
+                        'title'  => 'Client',
+                        'url'    => route('clients.index'),
+                        'active' => isActive('clients.index')
+                    ],
+                ]
+            "></x-menu-item>
 
         <x-menu-item
             title="Products"
@@ -68,6 +74,13 @@
                     ],
                 ]
             "></x-menu-item>
+
+        <x-menu-item
+            title="Seasons"
+            icon="bi bi-stack"
+            url="{{ route('seasons.index') }}"
+            isActive="{{ isActive('seasons.index') }}"
+            :isSingle="true"></x-menu-item>
 
     </ul>
 </div>
