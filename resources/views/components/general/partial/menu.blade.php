@@ -29,6 +29,11 @@
             :items="
                 [
                     [
+                        'title'  => 'Categories',
+                        'url'    => route('products.categories.index'),
+                        'active' => isActive('products.categories.index')
+                    ],
+                    [
                         'title'  => 'Products',
                         'url'    => route('products.index'),
                         'active' => isActive('products.index') || isActive('products.create')
@@ -37,11 +42,6 @@
                         'title'  => 'Inventories',
                         'url'    => route('inventories.index'),
                         'active' => isActive('inventories.index')
-                    ],
-                    [
-                        'title'  => 'Categories',
-                        'url'    => route('products.categories.index'),
-                        'active' => isActive('products.categories.index')
                     ],
                 ]
             "></x-menu-item>
