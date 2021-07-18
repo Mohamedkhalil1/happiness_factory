@@ -1,63 +1,48 @@
 <?php
 
-namespace App\Http\Livewire\Employee;
+namespace App\Http\Livewire\Client;
 
-use App\Enums\AttendanceTypes;
-use App\Enums\EmployeeType;
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
-use App\Models\Attendance;
-use App\Models\Employee;
-use App\Models\EmployeesCategory;
-use Illuminate\Support\Facades\DB;
+use App\Models\Client;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class EmpIndex extends Component
+class CliIndex extends Component
 {
     use WithFileUploads, WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
-    public string $pageTitle = 'Employees';
+    public string $pageTitle = 'Clients';
     public bool $showAdvancedSearch = false;
-    public $categories;
-    public Employee $employee;
-    public Attendance $attendance;
+    public Client $client;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
-    protected $listeners = ['resfreshEmployees', '$refresh'];
+    protected $listeners = ['refreshClients', '$refresh'];
 
     public $avatar;
 
     public array $filters = [
-        'search'        => null,
-        'social_status' => null,
-        'amount_min'    => null,
-        'amount_max'    => null,
-        'date_start'    => null,
-        'date_end'      => null,
-        'type'          => null,
-        'category_id'   => null,
+        'search'     => null,
+        'type'       => null,
+        'date_start' => null,
+        'amount_min' => null,
+        'date_end'   => null,
+        'amount_max' => null,
     ];
 
     public function rules(): array
     {
         return [
-            'employee.name'          => 'required',
-            'employee.type'          => 'required|between:1,2',
-            'employee.nickname'      => 'nullable|string|max:255',
-            'employee.address'       => 'nullable|string|max:255',
-            'employee.phone'         => 'nullable|numeric',
-            'employee.social_status' => 'nullable|between:1,3',
-            'employee.national_id'   => 'nullable|numeric',
-            'employee.worked_date'   => 'nullable|date',
-            'employee.details'       => 'nullable|string|max:64000',
-            'employee.category_id'   => 'required|integer|exists:employees_categories,id',
-            'employee.salary'        => 'nullable|integer|max:6400000',
-            'employee.avatar'        => 'nullable',
-            'avatar'                 => 'nullable|image|max:1048',
-            'attendance.date'        => 'nullable|date',
+            'client.name'        => 'required',
+            'client.type'        => 'nullable|between:1,2',
+            'client.address'     => 'nullable|string|max:255',
+            'client.phone'       => 'nullable|numeric|digits_between:11,13',
+            'client.worked_date' => 'nullable|date',
+            'client.details'     => 'nullable|string|max:64000',
+            'client.avatar'      => 'nullable|string',
+            'avatar'             => 'nullable|image|max:1048',
         ];
     }
 
@@ -71,8 +56,8 @@ class EmpIndex extends Component
         $csv = response()->streamDownload(function () {
             /* toCsv function you can get it in AppServiceProvider as macro*/
             echo $this->getselectedRowsQuery()->toCsv();
-        }, 'Employees' . today() . '.csv');
-        $this->notify('Employees have been downloaded successfully!');
+        }, 'Client' . today() . '.csv');
+        $this->notify('Clients have been downloaded successfully!');
         return $csv;
     }
 
@@ -82,64 +67,28 @@ class EmpIndex extends Component
         $this->selectedPage = false;
         $this->selectedAll = false;
         $this->resetPage();
-        $this->notify('Employees has been deleted successfully!');
+        $this->notify('Clients has been deleted successfully!');
     }
 
-    public function edit($employeeId)
+    public function edit($clientId)
     {
         $this->useCachedRows();
-        $this->employee = Employee::find($employeeId);
+        $this->client = Client::find($clientId);
     }
 
     public function create()
     {
         $this->useCachedRows();
-        $this->employee = new Employee();
-    }
-
-    public function createAttendance()
-    {
-        $this->useCachedRows();
-        $this->attendance = new Attendance();
-    }
-
-
-    public function storeAttendance()
-    {
-        DB::beginTransaction();
-        foreach ($this->selected as $employeId) {
-            $this->makeAttendance($employeId, AttendanceTypes::ATTENDED);
-        }
-        $employeesIds = Employee::query()
-            ->where('type', EmployeeType::FULL_TIME)
-            ->whereNotin('id', $this->selected)
-            ->get()
-            ->pluck('id');
-
-        foreach ($employeesIds as $employeId) {
-            $this->makeAttendance($employeId, AttendanceTypes::ABSENT);
-        }
-        $this->notify('Attendance has been saved successfully.');
-        DB::commit();
-    }
-
-    private function makeAttendance($employeId, $attended)
-    {
-
-        Attendance::create([
-            'date'        => $this->attendance->date,
-            'employee_id' => $employeId,
-            'attended'    => $attended,
-        ]);
+        $this->client = new Client();
     }
 
     public function updateOrCreate()
     {
         $this->validate();
-        $this->avatar && $this->employee->avatar = $this->avatar->store('/', 'files');
+        $this->avatar && $this->client->avatar = $this->avatar->store('/', 'files');
 
-        $this->employee->save();
-        $this->notify('Employee has been saved successfully!');
+        $this->client->save();
+        $this->notify('Client has been saved successfully!');
     }
 
     public function toggleAdvancedSearch(): void
@@ -162,9 +111,8 @@ class EmpIndex extends Component
     public function getRowsQueryProperty()
     {
         // searching
-        $query = Employee::query()
-            ->with('category')
-            ->byNameNickName($this->filters['search'] ?? null);
+        $query = Client::query()
+            ->search('name', $this->filters['search'] ?? null);
         //filters
         $query = $query->when($this->filters['social_status'] ?? null, function ($query) {
             $query->where('social_status', $this->filters['social_status']);
@@ -207,15 +155,11 @@ class EmpIndex extends Component
             $this->selectPageRows();
         }
 
-        if (!$this->categories) {
-            $this->categories = EmployeesCategory::select('id', 'name')->get();
-        }
-
-        return view('livewire.employee.emp-index', [
-            'models'     => $this->rows,
-            'categories' => $this->categories,
+        return view('livewire.client.cli-index', [
+            'models' => $this->rows,
         ])
             ->extends('layouts.app')
             ->section('content');
     }
+
 }
