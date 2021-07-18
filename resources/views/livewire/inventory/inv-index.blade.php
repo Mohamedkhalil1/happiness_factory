@@ -20,10 +20,11 @@
             {{--LEFT ACTIONS--}}
             <x-base.grid-col style="padding-left:3px" col="6">
                 {{--NEW--}}
-                <x-base.button-link href="{{ route('products.create') }}" style="float: right">
+                <x-base.button wire:click="create" style="float: right" data-bs-toggle="modal"
+                               data-bs-target="#model">
                     <x-icons.add/>
                     New
-                </x-base.button-link>
+                </x-base.button>
                 {{--BulkACTIONS--}}
                 <x-base.dropdown color="secondary" style="float: right" label="Bulk Actions" class="mr-2 ml-2">
                     <x-dropdown.item>
@@ -57,7 +58,7 @@
                                 <x-form.label title="Type"></x-form.label>
                                 <x-base.uselect wire:model="filters.season_id">
                                     <x-select.option value="0">
-                                        Select Employee Type
+                                        Select Season
                                     </x-select.option>
                                     @foreach($seasons as $season)
                                         <x-select.option
@@ -77,6 +78,38 @@
                                             value="{{ $category->id }}">{{ $category->name }}</x-select.option>
                                     @endforeach
                                 </x-base.uselect>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Color" hint="separate colors with comma"/>
+                                <x-form.input lazy name="filters.color" type="text"/>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Size" hint="separate sizes with comma"/>
+                                <x-form.input lazy name="filters.size" type="text"/>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Min Quantity"/>
+                                <x-form.input lazy name="filters.quantity_min" type="text"/>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Min Amount"/>
+                                <x-form.input lazy name="filters.amount_min" type="text"
+                                              inputGroupText="EGP"/>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Max Quantity"/>
+                                <x-form.input lazy name="filters.quantity_max" type="text"/>
+                            </x-form.form-group>
+
+                            <x-form.form-group col="6">
+                                <x-form.label title="Max Amount"/>
+                                <x-form.input lazy name="filters.amount_max" type="text"
+                                              inputGroupText="EGP"/>
                             </x-form.form-group>
 
                             <x-form.form-group col="6">
@@ -102,28 +135,36 @@
                     Image
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('name')" id="name"
-                                 :direction="$sortDirection">
+                <x-table.heading>
                     Name
                 </x-table.heading>
 
-                <x-table.heading>
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('price')" id="name"
+                                 :direction="$sortDirection">
+                    Price
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('quantity')" id="name"
+                                 :direction="$sortDirection">
                     Quantity
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('category_id')" id="name"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('color')" id="name"
                                  :direction="$sortDirection">
+                    Color
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('size')" id="name"
+                                 :direction="$sortDirection">
+                    Size
+                </x-table.heading>
+
+                <x-table.heading>
                     Category
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('season_id')" id="name"
-                                 :direction="$sortDirection">
+                <x-table.heading>
                     Season
-                </x-table.heading>
-
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('created_at')" id="name"
-                                 :direction="$sortDirection">
-                    Created At
                 </x-table.heading>
 
                 <x-table.heading>
@@ -139,8 +180,8 @@
                                 @unless($selectedAll)
                                     <div>
                                         <span>
-                                        You have selected <strong>{{ $models->count() }}</strong> employees, do you want to select all
-                                        <strong>{{ $models->total() }}</strong> employees?
+                                        You have selected <strong>{{ $models->count() }}</strong> inventories, do you want to select all
+                                        <strong>{{ $models->total() }}</strong> inventories?
                                         </span>
 
                                         <span wire:click="selectedAll" style="cursor: pointer;color:#0e46c5"
@@ -150,7 +191,7 @@
                                     </div>
                                 @else
                                     <span>
-                                       You are currently selecting <strong>{{ $models->total() }}</strong> employees.
+                                       You are currently selecting <strong>{{ $models->total() }}</strong> inventories.
                                    </span>
                                 @endunless
                             </div>
@@ -167,15 +208,16 @@
                                 <a target="_blank" href="{{  getImageUrl($model->image) }}">
                                     <x-base.avatar imageUrl="{{ getImageUrl($model->image) }}"/>
                                 </a>
+
                             @endif
                         </x-table.cell>
-                        <x-table.cell>
-                            {{ $model->name }}
-                        </x-table.cell>
+                        <x-table.cell>{{ $model->product->name ?? '-' }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->price) }}</x-table.cell>
                         <x-table.cell>{{ $model->quantity }}</x-table.cell>
-                        <x-table.cell>{{ $model->category->name ?? '' }}</x-table.cell>
-                        <x-table.cell>{{ $model->season->name ?? '' }}</x-table.cell>
-                        <x-table.cell>{{ formatDate($model->created_at) }}</x-table.cell>
+                        <x-table.cell>{{ $model->color }}</x-table.cell>
+                        <x-table.cell>{{ $model->size }}</x-table.cell>
+                        <x-table.cell>{{ $model->product->category->name ?? '' }}</x-table.cell>
+                        <x-table.cell>{{ $model->product->season->name ?? '' }}</x-table.cell>
 
                         <x-table.cell>
                             <a href="javascript:" title="edit" wire:click="edit({{$model->id}})" style="cursor: pointer"
@@ -188,7 +230,7 @@
                     <x-table.row>
                         <x-table.cell colspan="11">
                             <div class="text-center text-muted text-uppercase">
-                                No products found...
+                                No inventories found...
                             </div>
                         </x-table.cell>
                     </x-table.row>
@@ -196,11 +238,7 @@
             </x-slot>
         </x-base.table>
         <div>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination pagination-primary">
-                    {{ $models->links() }}
-                </ul>
-            </nav>
+            {{ $models->links() }}
         </div>
     </x-base.card>
     {{--MODAL User --}}
@@ -211,43 +249,61 @@
         <x-slot name="content">
             <x-base.grid>
                 <div class="col-md-4">
-                    <x-form.label :required="true" title="Name"/>
+                    <x-form.label required title="Price"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input type="text" :required="true" lazy="true" class="round"
-                                  name="product.name"></x-form.input>
+                    <x-form.input type="text" required lazy class="round"
+                                  name="inventory.price"></x-form.input>
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Category"></x-form.label>
+                    <x-form.label required title="Quantity"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="product.season_id" wire:model="product.season_id">
-                        <x-select.option value="0">Select Season</x-select.option>
-                        @foreach($seasons as $season)
-                            <x-select.option value="{{ $season->id }}">{{ $season->name }}</x-select.option>
-                        @endforeach
-                    </x-base.uselect>
+                    <x-form.input type="text" required lazy class="round"
+                                  name="inventory.quantity"></x-form.input>
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Category"></x-form.label>
+                    <x-form.label required title="Color"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="product.category_id" wire:model="product.category_id">
+                    <x-form.input type="text" required lazy class="round"
+                                  name="inventory.color"></x-form.input>
+                </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label required title="Size"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input type="text" required lazy class="round"
+                                  name="inventory.size"></x-form.input>
+                </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label required title="Product"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-base.uselect name="inventory.product_id" wire:model="inventory.product_id">
                         <x-select.option value="0">Select Category</x-select.option>
-                        @foreach($categories as $category)
-                            <x-select.option value="{{ $category->id }}">{{ $category->name }}</x-select.option>
+                        @foreach($products as $product)
+                            <x-select.option value="{{ $product->id }}">{{ $product->name }}</x-select.option>
                         @endforeach
                     </x-base.uselect>
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label title="Description"/>
+                    <x-form.label title="Image"/>
+
+                    @if(isset($inventory->image) &&$inventory->image)
+                        <img style="height:150px;width:150px;" src="{{ getImageUrl($inventory->image) }}"/>
+                    @endif
                 </div>
+
                 <x-form.form-group col="8">
-                    <x-form.textarea wire:model="product.description" title="description"/>
+                    <x-form.upload-photo name="avatar"/>
                 </x-form.form-group>
+
 
             </x-base.grid>
         </x-slot>

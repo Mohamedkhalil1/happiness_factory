@@ -7,7 +7,8 @@ use Livewire\WithPagination;
 trait WithPerPagePagination
 {
     use WithPagination;
-
+    
+    protected string $paginationTheme = 'bootstrap';
     public int $perPage = 10;
     private int $maxPerPage = 50;
     private int $minPerPage = 10;

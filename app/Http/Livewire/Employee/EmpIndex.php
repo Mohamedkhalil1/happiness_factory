@@ -84,10 +84,10 @@ class EmpIndex extends Component
         $this->notify('Employees has been deleted successfully!');
     }
 
-    public function edit($transactionId)
+    public function edit($employeeId)
     {
         $this->useCachedRows();
-        $this->employee = Employee::find($transactionId);
+        $this->employee = Employee::find($employeeId);
     }
 
     public function create()

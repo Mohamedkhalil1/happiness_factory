@@ -43,6 +43,16 @@ class ProCreate extends Component
     }
 
 
+    public function hydrate()
+    {
+        $this->dispatchBrowserEvent('updating');
+    }
+
+    public function dehydrate()
+    {
+        $this->dispatchBrowserEvent('updated');
+    }
+
     public function showInventories()
     {
         $this->inventories = [];
@@ -106,7 +116,7 @@ class ProCreate extends Component
         }
         DB::commit();
         $this->notify('Product created successfully');
-        return redirect()->route('products.categories.index');
+        return redirect()->route('products.index');
     }
 
     public function notify($message = 'saved', $color = "#4fbe87")
@@ -122,6 +132,7 @@ class ProCreate extends Component
     private function createInventory($inventory, $price, $quantity, $image)
     {
         $colorSize = explode('/', $inventory);
+        $image = $image->store('/', 'files');
         $color = $colorSize[0] ?? '';
         $size = $colorSize[1] ?? '';
         Inventory::create([
@@ -129,6 +140,7 @@ class ProCreate extends Component
             'quantity'   => $quantity,
             'color'      => $color,
             'size'       => $size,
+            'image'      => $image,
             'product_id' => $this->product->id,
         ]);
     }
@@ -145,6 +157,8 @@ class ProCreate extends Component
         return view('livewire.product.pro-create', [
             'categories' => $this->categories,
             'seasons'    => $this->seasons,
-        ])->extends('layouts.app')->section('content');
+        ])
+            ->extends('layouts.app')
+            ->section('content');
     }
 }

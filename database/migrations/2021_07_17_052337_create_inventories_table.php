@@ -19,7 +19,8 @@ class CreateInventoriesTable extends Migration
             $table->integer('quantity')->default(0);
             $table->string('color');
             $table->string('size');
-            $table->foreignId('product_id')->constrained();
+            $table->string('image');
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

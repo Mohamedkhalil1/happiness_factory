@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 function isActive(string $route, string $activeClass = 'active', string $notActiveClass = '')
 {
@@ -27,10 +28,18 @@ function formatDate($date)
 }
 
 
-function formatMoney($amount)
+function formatMoney($amount): ?string
 {
     if (!$amount) {
         return $amount;
     }
     return '$ ' . $amount . ' EGP';
+}
+
+function getImageUrl($image): string
+{
+    if ($image) {
+        return Storage::disk('files')->url($image);
+    }
+    return '';
 }

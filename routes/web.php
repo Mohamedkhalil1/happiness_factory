@@ -8,7 +8,9 @@ use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\CategoryEmploye\Index as CategoryIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
+use App\Http\Livewire\Inventory\InvIndex;
 use App\Http\Livewire\Product\ProCreate;
+use App\Http\Livewire\Product\ProIndex;
 use App\Http\Livewire\ProductCategory\PCatIndex;
 use App\Http\Livewire\Profile\Show;
 use App\Http\Livewire\Salary\SalIndex;
@@ -61,8 +63,16 @@ Route::group([
         'prefix' => 'products',
         'as'     => 'products.',
     ], function () {
+        Route::get('/', ProIndex::class)->name('index');
         Route::get('/create', ProCreate::class)->name('create');
         Route::get('/categories', PCatIndex::class)->name('categories.index');
+    });
+
+    Route::group([
+        'prefix' => 'inventories',
+        'as'     => 'inventories.',
+    ], function () {
+        Route::get('/', InvIndex::class)->name('index');
     });
 
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');

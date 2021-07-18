@@ -2,8 +2,8 @@
 <div wire:ignore>
     <input {{ $attributes }} type="file" class="image-resize-filepond">
     <span class="text-danger">
-                   @error('newAvatar') {{ $message }} @enderror
-               </span>
+       @error($name) {{ $message }} @enderror
+   </span>
 </div>
 
 

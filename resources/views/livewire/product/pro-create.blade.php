@@ -2,11 +2,11 @@
     @section('title',$pageTitle)
     <x-form.form action="createInventories">
         <x-base.card title="{{$pageTitle}}">
+            <x-general.progress-bar />
             <x-form.form-group col="12">
                 <x-form.label required title="Name"/>
                 <x-form.input type="text" lazy="true" name="product.name"/>
             </x-form.form-group>
-
             <x-form.form-group col="6">
                 <x-form.label required title="Category"/>
                 <x-base.uselect name="product.category_id" wire:model="product.category_id">
@@ -27,19 +27,18 @@
                 </x-base.uselect>
             </x-form.form-group>
 
-
             <x-form.form-group col="12">
                 <x-form.label title="Description"/>
                 <x-form.textarea lazy="true" name="product.description" title="Description"/>
             </x-form.form-group>
 
             <x-form.form-group required col="6">
-                <x-form.label required title="Color"/>
+                <x-form.label required title="Color" hint="separate colors with comma"/>
                 <x-form.input required name="color" type="text"/>
             </x-form.form-group>
 
             <x-form.form-group required col="6">
-                <x-form.label required title="Size"/>
+                <x-form.label required title="Size" hint="separate sizes with comma"/>
                 <x-form.input required name="size" type="text"/>
             </x-form.form-group>
             @if($color && $size)
@@ -76,9 +75,6 @@
                                 </x-form.form-group>
 
                                 <x-card.body>
-                                    {{--                                            <x-card.title>--}}
-                                    {{--                                                {{ $inventory }}--}}
-                                    {{--                                            </x-card.title>--}}
                                     <x-card.text>
                                         <x-form.form-group required col="12">
                                             <x-form.label required title="Price"/>

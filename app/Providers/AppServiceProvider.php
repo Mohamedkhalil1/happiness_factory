@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -47,5 +49,7 @@ class AppServiceProvider extends ServiceProvider
             $values->prepend($titles);
             return $values->implode("\n");
         });
+
+        Paginator::useBootstrap();
     }
 }
