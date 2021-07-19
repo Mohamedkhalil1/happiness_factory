@@ -9,44 +9,6 @@
             :isSingle="true"></x-menu-item>
 
         <x-menu-item
-            title="Client"
-            icon="bi bi-person-badge-fill"
-            :isSingle="false"
-            :items="
-                [
-                    [
-                        'title'  => 'Client',
-                        'url'    => route('clients.index'),
-                        'active' => isActive('clients.index')
-                    ],
-                ]
-            "></x-menu-item>
-
-        <x-menu-item
-            title="Products"
-            icon="bi bi-collection-fill"
-            :isSingle="false"
-            :items="
-                [
-                    [
-                        'title'  => 'Categories',
-                        'url'    => route('products.categories.index'),
-                        'active' => isActive('products.categories.index')
-                    ],
-                    [
-                        'title'  => 'Products',
-                        'url'    => route('products.index'),
-                        'active' => isActive('products.index') || isActive('products.create')
-                    ],
-                    [
-                        'title'  => 'Inventories',
-                        'url'    => route('inventories.index'),
-                        'active' => isActive('inventories.index')
-                    ],
-                ]
-            "></x-menu-item>
-
-        <x-menu-item
             title="Employees"
             icon="bi bi-person-fill"
             :isSingle="false"
@@ -75,6 +37,64 @@
                 ]
             "></x-menu-item>
 
+
+        <x-menu-item
+            title="Products"
+            icon="bi bi-collection-fill"
+            :isSingle="false"
+            :items="
+                [
+                    [
+                        'title'  => 'Categories',
+                        'url'    => route('products.categories.index'),
+                        'active' => isActive('products.categories.index')
+                    ],
+                    [
+                        'title'  => 'Products',
+                        'url'    => route('products.index'),
+                        'active' => isActive('products.index') || isActive('products.create')
+                    ],
+                    [
+                        'title'  => 'Inventories',
+                        'url'    => route('inventories.index'),
+                        'active' => isActive('inventories.index')
+                    ],
+                ]
+            "></x-menu-item>
+
+        <x-menu-item
+            title="Orders"
+            icon="bi bi-cart4"
+            :isSingle="false"
+            :items="
+                [
+                    [
+                        'title'  => 'All Orders',
+                        'url'    => route('orders.index'),
+                        'active' => isActive('orders.index')
+                    ],
+                    [
+                        'title'  => 'Make Order',
+                        'url'    => route('orders.create'),
+                        'active' => isActive('orders.create')
+                    ],
+                ]
+            "></x-menu-item>
+
+
+        <x-menu-item
+            title="Client"
+            icon="bi bi-people"
+            :isSingle="false"
+            :items="
+                [
+                    [
+                        'title'  => 'Client',
+                        'url'    => route('clients.index'),
+                        'active' => isActive('clients.index')
+                    ],
+                ]
+            "></x-menu-item>
         <x-menu-item
             title="Seasons"
             icon="bi bi-stack"

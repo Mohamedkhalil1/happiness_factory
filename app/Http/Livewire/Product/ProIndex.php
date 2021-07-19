@@ -23,7 +23,7 @@ class ProIndex extends Component
     public $categories;
     public Product $product;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
-    protected $listeners = ['resfreshEmployees', '$refresh'];
+    protected $listeners = ['refreshProducts', '$refresh'];
 
     public array $filters = [
         'search'      => null,

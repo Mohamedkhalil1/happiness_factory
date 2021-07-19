@@ -26,7 +26,7 @@ class EmpIndex extends Component
     public Employee $employee;
     public Attendance $attendance;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
-    protected $listeners = ['resfreshEmployees', '$refresh'];
+    protected $listeners = ['refreshEmployees', '$refresh'];
 
     public $avatar;
 

@@ -13,7 +13,15 @@
                     @if($showAdvancedSearch)
                         <div>
                             <x-base.card style="background: #17161621" title="Filters">
+
                                 <x-base.grid>
+                                    <x-form.form-group col="6">
+                                        <x-form.label title="Product Name"></x-form.label>
+                                        <x-form.input lazy="true" type="text" class="round" name="filters.search"
+                                                      placeholder="search product name...">
+                                        </x-form.input>
+                                    </x-form.form-group>
+
                                     <x-form.form-group col="6">
                                         <x-form.label title="Type"></x-form.label>
                                         <x-base.uselect wire:model="filters.season_id">
@@ -110,7 +118,7 @@
                                             <i class="bi bi-lightning-fill"></i>
                                             Size : {{ $inventory->size }}
                                         </div>
-                                        <div class="alert alert-light-secondary color-secondary">
+                                        <div class="alert alert-light-info color-info">
                                             <i class="bi bi-cash"></i>
                                             Price : {{ formatMoney($inventory->price) }}
                                         </div>
@@ -118,6 +126,9 @@
 
                                     <x-card.text>
                                         <x-form.label title="Quantity"/>
+                                        <p class="text-muted text-sm">
+                                            (max quantity in store: {{ $inventory->quantity }})
+                                        </p>
                                         <x-form.input class="mb-3"
                                                       lazy
                                                       name="quantities.{{ $inventory->id }}"

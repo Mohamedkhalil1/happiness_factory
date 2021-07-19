@@ -175,7 +175,7 @@
                     Salary
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('salary')" id="worked_date"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('worked_date')" id="worked_date"
                                  :direction="$sortDirection">
                     Worked Date
                 </x-table.heading>
