@@ -47,4 +47,16 @@ class Product extends Model
     {
         return $this->hasMany(Inventory::class);
     }
+
+    #methods
+    public function getColors()
+    {
+        return $this->inventories->groupBy('color')->keys();
+    }
+
+    public function getSizes()
+    {
+        return $this->inventories->groupBy('size')->keys();
+    }
+
 }

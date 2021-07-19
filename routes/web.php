@@ -10,6 +10,8 @@ use App\Http\Livewire\Client\CliIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
 use App\Http\Livewire\Inventory\InvIndex;
+use App\Http\Livewire\Order\OrdCreate;
+use App\Http\Livewire\Order\OrdIndex;
 use App\Http\Livewire\Product\ProCreate;
 use App\Http\Livewire\Product\ProIndex;
 use App\Http\Livewire\ProductCategory\PCatIndex;
@@ -83,6 +85,13 @@ Route::group([
         Route::get('/', CliIndex::class)->name('index');
     });
 
+    Route::group([
+        'prefix' => 'orders',
+        'as'     => 'orders.',
+    ], function () {
+        Route::get('/', OrdIndex::class)->name('index');
+        Route::get('/create', OrdCreate::class)->name('create');
+    });
 
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');
 });
