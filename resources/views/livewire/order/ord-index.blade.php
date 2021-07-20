@@ -193,7 +193,9 @@
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
                         </x-table.cell>
                         <x-table.cell>
-                            {{ $model->id }}
+                            <a href="{{ route('orders.show',$model->id) }}">
+                                {{ $model->id }}
+                            </a>
                         </x-table.cell>
                         <x-table.cell>
                             @if(isset($model->client->avatar) && $model->client->avatar)

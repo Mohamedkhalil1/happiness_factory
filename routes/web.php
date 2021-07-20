@@ -14,6 +14,7 @@ use App\Http\Livewire\Materials\Materials;
 use App\Http\Livewire\Materials\Ores;
 use App\Http\Livewire\Order\OrdCreate;
 use App\Http\Livewire\Order\OrdIndex;
+use App\Http\Livewire\Order\OrdShow;
 use App\Http\Livewire\Product\ProCreate;
 use App\Http\Livewire\Product\ProIndex;
 use App\Http\Livewire\ProductCategory\PCatIndex;
@@ -92,6 +93,7 @@ Route::group([
     ], function () {
         Route::get('/', OrdIndex::class)->name('index');
         Route::get('/create', OrdCreate::class)->name('create');
+        Route::get('/{id}/show', OrdShow::class)->name('show');
     });
 
     Route::group([
