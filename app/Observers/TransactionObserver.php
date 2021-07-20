@@ -12,6 +12,7 @@ class TransactionObserver
     {
         $order = $transaction->order;
         $order->remain -= $transaction->amount;
+        $order->getStatus();
         $order->save();
     }
 
@@ -20,6 +21,7 @@ class TransactionObserver
         $order = $transaction->order;
         $order->remain += $transaction->getOriginal('amount');
         $order->remain -= $transaction->amount;
+        $order->getStatus();
         $order->save();
     }
 }

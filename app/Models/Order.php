@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use App\Observers\OrderObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -50,5 +51,16 @@ class Order extends Model
     public function orderInventories(): HasMany
     {
         return $this->hasMany(inventoryOrder::class);
+    }
+
+    public function getStatus()
+    {
+        if (!$this->remain) {
+            $this->status = OrderStatus::DONE;
+        } else if ($this->amount_after_discount - $this->remain) {
+            $this->status = OrderStatus::IN_PROGRESS;
+        } else {
+            $this->status = OrderStatus::PENDING;
+        }
     }
 }

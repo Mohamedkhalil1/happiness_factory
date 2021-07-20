@@ -221,6 +221,7 @@
 
                                 @if($model->remain)
                                     <a href="javascript:" title="transaction" class="text-muted mr-3"
+                                       wire:click="storeModelId({{$model->id}})"
                                        style="cursor: pointer"
                                        data-bs-toggle="modal" data-bs-target="#model">
                                         <x-icons.money class="text-muted" />
@@ -256,7 +257,7 @@
         </div>
     </x-base.card>
 
-    <x-base.modal id="model" size="lg" formAction="storeTransaction('{{$model->id}}')">
+    <x-base.modal id="model" size="lg" formAction="storeTransaction">
         <x-slot name="title">
             Transaction
         </x-slot>

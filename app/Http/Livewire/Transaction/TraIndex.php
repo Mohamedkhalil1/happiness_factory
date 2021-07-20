@@ -70,7 +70,9 @@ class TraIndex extends Component
         foreach ($transactions as $transaction) {
             $order = $transaction->order;
             $order->remain += $transaction->amount;
+            $order->getStatus();
             $order->save();
+            $transaction->delete();
         }
         DB::commit();
         $this->selectedPage = false;

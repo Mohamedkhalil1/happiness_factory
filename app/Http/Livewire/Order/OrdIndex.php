@@ -19,6 +19,7 @@ class OrdIndex extends Component
     public string $pageTitle = 'Orders';
     public bool $showAdvancedSearch = false;
     public Transcation $transaction;
+    public int $orderId;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshOrders', '$refresh'];
 
@@ -33,9 +34,10 @@ class OrdIndex extends Component
 
     public function rules(): array
     {
+        $maxAmount = Order::find($this->orderId ?? 0)->remain ?? 0;
         return [
             'transaction.date'     => 'required',
-            'transaction.amount'   => 'required|numeric|max:9999999',
+            'transaction.amount'   => 'required|numeric|max:'.$maxAmount,
             'transaction.note'     => 'nullable|string|max:255',
             'transaction.order_id' => 'required|exists:orders,id',
         ];
@@ -47,11 +49,17 @@ class OrdIndex extends Component
     }
 
 
-    public function storeTransaction($orderId)
+    public function storeModelId($id)
     {
-        $this->transaction->order_id = $orderId;
+        $this->orderId = $id;
+    }
+
+    public function storeTransaction()
+    {
+        $this->transaction->order_id = $this->orderId;
         $this->validate();
         $this->transaction->save();
+        $this->transaction = new Transcation();
         $this->notify('Transaction has been done successfully');
     }
 
