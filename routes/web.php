@@ -10,6 +10,8 @@ use App\Http\Livewire\Client\CliIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
 use App\Http\Livewire\Inventory\InvIndex;
+use App\Http\Livewire\Materials\Materials;
+use App\Http\Livewire\Materials\Ores;
 use App\Http\Livewire\Order\OrdCreate;
 use App\Http\Livewire\Order\OrdIndex;
 use App\Http\Livewire\Product\ProCreate;
@@ -90,6 +92,14 @@ Route::group([
     ], function () {
         Route::get('/', OrdIndex::class)->name('index');
         Route::get('/create', OrdCreate::class)->name('create');
+    });
+
+    Route::group([
+        'prefix' => 'materials',
+        'as'     => 'materials.',
+    ], function () {
+        Route::get('/', Materials::class)->name('index');
+        Route::get('/ores', Ores::class)->name('ores.index');
     });
 
     Route::get('/transactions', TraIndex::class)->name('transactions.index');
