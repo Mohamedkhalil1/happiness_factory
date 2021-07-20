@@ -18,4 +18,20 @@ class Client extends Model
         'details',
         'avatar',
     ];
+
+    public function getTotalAmountAttribute()
+    {
+        return $this->orders->sum('amount_after_discount');
+    }
+
+
+    public function getPaidAmountAttribute()
+    {
+        return $this->orders->sum('amount_after_discount') - $this->orders->sum('remain');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

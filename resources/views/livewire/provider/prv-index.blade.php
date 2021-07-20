@@ -7,7 +7,7 @@
             {{--SEARCH--}}
             <x-base.grid-col col="3">
                 <x-form.input lazy="true" type="text" class="round" name="filters.search"
-                              placeholder="search clients name...">
+                              placeholder="search providers name...">
                 </x-form.input>
             </x-base.grid-col>
             {{--ADVANCED SEARCH--}}
@@ -109,10 +109,6 @@
                     <x-base.checkbox wire:model="selectedPage"/>
                 </x-table.heading>
 
-                <x-table.heading>
-                    Avatar
-                </x-table.heading>
-
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('name')" id="name"
                                  :direction="$sortDirection">
                     Name
@@ -128,15 +124,6 @@
                 </x-table.heading>
 
                 <x-table.heading>
-                   Total Amount
-                </x-table.heading>
-
-                <x-table.heading>
-                   Paid Amount
-                </x-table.heading>
-
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('address')" id="worked_date"
-                                 :direction="$sortDirection">
                     Address
                 </x-table.heading>
 
@@ -159,8 +146,8 @@
                                 @unless($selectedAll)
                                     <div>
                                         <span>
-                                        You have selected <strong>{{ $models->count() }}</strong> clients, do you want to select all
-                                        <strong>{{ $models->total() }}</strong> clients?
+                                        You have selected <strong>{{ $models->count() }}</strong> providers, do you want to select all
+                                        <strong>{{ $models->total() }}</strong> providers?
                                         </span>
 
                                         <span wire:click="selectedAll" style="cursor: pointer;color:#0e46c5"
@@ -170,7 +157,7 @@
                                     </div>
                                 @else
                                     <span>
-                                       You are currently selecting <strong>{{ $models->total() }}</strong> clients.
+                                       You are currently selecting <strong>{{ $models->total() }}</strong> providers.
                                    </span>
                                 @endunless
                             </div>
@@ -183,11 +170,6 @@
                         <x-table.cell>
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
                         </x-table.cell>
-                        <x-table.cell>
-                            @if(isset($model->avatar) && $model->avatar)
-                                <x-base.avatar imageUrl="{{ getImageUrl($model->avatar) }}"/>
-                            @endif
-                        </x-table.cell>
                         <x-table.cell>{{ $model->name }}</x-table.cell>
                         <x-table.cell>
                             <x-base.badge type="{{\App\Enums\ClientType::getColor($model->type)  }}">
@@ -195,8 +177,6 @@
                             </x-base.badge>
                         </x-table.cell>
                         <x-table.cell>{{ $model->phone }}</x-table.cell>
-                        <x-table.cell>{{ $model->total_amount }}</x-table.cell>
-                        <x-table.cell>{{ $model->paid_amount }}</x-table.cell>
                         <x-table.cell>{{ $model->address }}</x-table.cell>
                         <x-table.cell>{{ formatDate($model->worked_date) }}</x-table.cell>
 
@@ -211,7 +191,7 @@
                     <x-table.row>
                         <x-table.cell colspan="11">
                             <div class="text-center text-muted text-uppercase">
-                                No clients found...
+                                No providers found...
                             </div>
                         </x-table.cell>
                     </x-table.row>
@@ -230,19 +210,19 @@
         <x-slot name="content">
             <x-base.grid>
                 <div class="col-md-4">
-                    <x-form.label :required="true" title="Name"/>
+                    <x-form.label required title="Name"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input type="text" :required="true" lazy="true" class="round"
-                                  name="client.name"></x-form.input>
+                    <x-form.input type="text" required lazy class="round"
+                                  name="provider.name"></x-form.input>
                 </x-form.form-group>
 
                 <div class="col-md-4">
                     <x-form.label required title="Type"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="client.type" wire:model="client.type">
-                        <x-select.option value="0">Select Client Type</x-select.option>
+                    <x-base.uselect name="provider.type" wire:model="provider.type">
+                        <x-select.option value="0">Select Provider Type</x-select.option>
                         @foreach(\App\Enums\ClientType::keyValue() as $status)
                             <x-select.option value="{{ $status['id'] }}">{{ $status['name'] }}</x-select.option>
                         @endforeach
@@ -253,39 +233,28 @@
                     <x-form.label title="Phone"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input lazy="true" name="client.phone" type="number"></x-form.input>
+                    <x-form.input lazy name="provider.phone" type="number"></x-form.input>
                 </x-form.form-group>
 
                 <div class="col-md-4">
                     <x-form.label title="Address"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input lazy="true" name="client.address" type="text"></x-form.input>
+                    <x-form.input lazy name="provider.address" type="text"></x-form.input>
                 </x-form.form-group>
 
                 <div class="col-md-4">
                     <x-form.label title="Worked Date"></x-form.label>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.date-time id="worked_date" name="client.worked_date" type="text"/>
+                    <x-form.date-time id="worked_date" name="provider.worked_date" type="text"/>
                 </x-form.form-group>
 
                 <div class="col-md-4">
                     <x-form.label title="Details"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.textarea wire:model="client.details" title="details"/>
-                </x-form.form-group>
-
-                <div class="col-md-4">
-                    <x-form.label title="Avatar"/>
-                    @if(isset($client->avatar) && $client->avatar)
-                        <x-base.avatar imageUrl="{{ getImageUrl($client->avatar) }}"/>
-                    @endif
-                </div>
-
-                <x-form.form-group col="8">
-                    <x-form.upload-photo name="avatar"/>
+                    <x-form.textarea wire:model="provider.details" title="details"/>
                 </x-form.form-group>
 
             </x-base.grid>
