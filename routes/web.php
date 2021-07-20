@@ -18,8 +18,8 @@ use App\Http\Livewire\ProductCategory\PCatIndex;
 use App\Http\Livewire\Profile\Show;
 use App\Http\Livewire\Salary\SalIndex;
 use App\Http\Livewire\Season\SeaIndex;
-use App\Http\Livewire\Transaction\AdvancedIndex;
-use App\Http\Livewire\Transaction\Index;
+use App\Http\Livewire\Transaction\TraCreate;
+use App\Http\Livewire\Transaction\TraIndex;
 use App\Http\Livewire\User\Create;
 use Illuminate\Support\Facades\Route;
 
@@ -48,8 +48,6 @@ Route::group([
     Route::get('/', Dashboard::class)->name('dashboard');
     Route::get('/profile', Show::class)->name('profile.show');
     Route::get('/user/create', Create::class)->name('user.create');
-    Route::get('/transactions', Index::class)->name('transaction.index');
-    Route::get('/transactions/advanced', AdvancedIndex::class)->name('transaction.advanced-index');
     Route::group([
 
         'prefix' => 'employees',
@@ -91,6 +89,14 @@ Route::group([
     ], function () {
         Route::get('/', OrdIndex::class)->name('index');
         Route::get('/create', OrdCreate::class)->name('create');
+    });
+
+    Route::group([
+        'prefix' => 'transactions',
+        'as'     => 'transactions.',
+    ], function () {
+        Route::get('/', TraIndex::class)->name('index');
+        Route::get('/create', TraCreate::class)->name('create');
     });
 
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');

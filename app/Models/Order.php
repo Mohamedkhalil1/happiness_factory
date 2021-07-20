@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\OrderObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,11 @@ class Order extends Model
         'status',
         'client_id',
     ];
+
+    protected static function booted()
+    {
+        self::observe(OrderObserver::class);
+    }
 
     public function getPaidAmountAttribute()
     {

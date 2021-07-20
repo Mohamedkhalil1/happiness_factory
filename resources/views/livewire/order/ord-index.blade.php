@@ -211,10 +211,16 @@
                         <x-table.cell>{{ formatMoney($model->remain) }}</x-table.cell>
 
                         <x-table.cell>
-                            <a href="javascript:" title="edit" wire:click="edit({{$model->id}})" style="cursor: pointer"
-                               data-bs-toggle="modal" data-bs-target="#model">
-                                <x-icons.edit/>
-                            </a>
+                            @if(!$model->paid)
+                                <span style="cursor: pointer" class="text-muted"
+                                      onclick="confirm('are you sure ?') || event.stopImmediatePropagation()"
+                                      wire:click="delete({{$model->id}})">
+                               <x-icons.delete class="text-muted"/>
+                              </span>
+                            @else
+                                <p class="text-muted">NO ACTIONS</p>
+
+                            @endif
                         </x-table.cell>
                     </x-table.row>
                 @empty

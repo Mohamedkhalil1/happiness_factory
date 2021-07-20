@@ -20,7 +20,7 @@ class OrdCreate extends Component
     use WithPerPagePagination, WithCachedRows, WithInventoriesFilters, WithSorting;
 
     public string $pageTitle = 'Order Details';
-    public Order $order;
+    public $order;
     public array $quantities = [];
     public $orderInventories = [];
     public bool $showInventories = true;
@@ -136,7 +136,7 @@ class OrdCreate extends Component
             $this->order->orderInventories()->create($orderInventory);
         }
         DB::commit();
-//        return redirect()->route('orders.index');
+        return redirect()->route('orders.index');
     }
 
     private function calculateAfterDiscount()

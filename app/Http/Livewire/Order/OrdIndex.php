@@ -20,15 +20,13 @@ class OrdIndex extends Component
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshOrders', '$refresh'];
 
-    public $avatar;
-
     public array $filters = [
-        'search'        => null,
-        'amount_min'    => null,
-        'amount_max'    => null,
-        'date_start'    => null,
-        'date_end'      => null,
-        'status'        => null,
+        'search'     => null,
+        'amount_min' => null,
+        'amount_max' => null,
+        'date_start' => null,
+        'date_end'   => null,
+        'status'     => null,
     ];
 
 
@@ -47,14 +45,17 @@ class OrdIndex extends Component
         return $csv;
     }
 
-//    public function deleteSelected(): void
-//    {
-//        $this->getselectedRowsQuery()->delete();
-//        $this->selectedPage = false;
-//        $this->selectedAll = false;
-//        $this->resetPage();
-//        $this->notify('Orders has been deleted successfully!');
-//    }
+    public function delete($orderId): void
+    {
+        $order = $this->rows->find($orderId);
+        if (!$order) {
+            $this->notify('Orders is not found!');
+        } else {
+            $order->delete();
+            $this->resetFilters();
+            $this->notify('Orders has been deleted successfully!');
+        }
+    }
 
     public function toggleAdvancedSearch(): void
     {

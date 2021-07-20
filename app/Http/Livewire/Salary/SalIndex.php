@@ -49,6 +49,11 @@ class SalIndex extends Component
         $this->resetPage();
     }
 
+    public function updatedSalaryEmployeeId($value)
+    {
+        $this->salary->amount = $this->employees->find($value)->salary ?? 0;
+    }
+
     public function exportSelected(): StreamedResponse
     {
         $csv = response()->streamDownload(function () {
@@ -158,7 +163,7 @@ class SalIndex extends Component
         }
 
         if (!$this->employees) {
-            $this->employees = Employee::select('id', 'name', 'nickname')->get();
+            $this->employees = Employee::select('id', 'name', 'nickname', 'salary')->get();
         }
 
         return view('livewire.salary.sal-index', [
