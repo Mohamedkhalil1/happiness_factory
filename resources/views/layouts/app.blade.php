@@ -26,7 +26,14 @@
     <link rel="stylesheet" href="{{asset('assets/vendors/toastify/toastify.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/choices.js/choices.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/vendors/fontawesome/all.min.css')}}">
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+        <style>
+            .pika-lendar {
+                float: left;
+                width: 370px !important;
+                margin: 8px;
+            }
+        </style>
     <title>
         @yield('title') - {{ config('app.name') }}
     </title>
@@ -103,7 +110,8 @@
 </script>
 @livewireScripts
 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-
+        <script src="https://unpkg.com/moment"></script>
+        <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
 @stack('script')
 </body>

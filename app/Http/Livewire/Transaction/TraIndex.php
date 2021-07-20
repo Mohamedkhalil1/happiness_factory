@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Http\Livewire\Salary;
+namespace App\Http\Livewire\Transaction;
 
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
-use App\Models\Employee;
-use App\Models\Salary;
+use App\Models\Order;
+use App\Models\Transcation;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class SalIndex extends Component
+class TraIndex extends Component
 {
     use WithFileUploads, WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
-    public string $pageTitle = 'Salaries';
+    public string $pageTitle = 'Transactions';
     public bool $showAdvancedSearch = false;
-    public $salaries;
-    public $employees;
-    public Salary $salary;
+    public $orders;
+    public Transcation $transaction;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
-    protected $listeners = ['resfreshSalaries', '$refresh'];
+    protected $listeners = ['refreshTransactions', '$refresh'];
 
     public array $filters = [
         'search'     => null,
-        'with'       => null,
+        'order_id'   => null,
         'amount_min' => null,
         'amount_max' => null,
         'date_start' => null,
@@ -36,12 +36,16 @@ class SalIndex extends Component
     public function rules(): array
     {
         return [
-            'salary.amount'      => 'required|numeric|max:99999999',
-            'salary.with'        => 'nullable|integer|between:1,3',
-            'salary.with_value'  => 'nullable|numeric|max:99999999',
-            'salary.date'        => 'required|date',
-            'salary.employee_id' => 'required|integer|exists:employees,id',
+            'transaction.date'     => 'required',
+            'transaction.amount'   => 'required|numeric|max:9999999',
+            'transaction.note'     => 'nullable|string|max:255',
+            'transaction.order_id' => 'required|exists:orders,id',
         ];
+    }
+
+    public function mount()
+    {
+        $this->transaction = new Transcation();
     }
 
     public function updatedFilters()
@@ -49,50 +53,53 @@ class SalIndex extends Component
         $this->resetPage();
     }
 
-    public function updatedSalaryEmployeeId($value)
-    {
-        $this->salary->amount = $this->employees->find($value)->salary ?? 0;
-    }
-
     public function exportSelected(): StreamedResponse
     {
         $csv = response()->streamDownload(function () {
             /* toCsv function you can get it in AppServiceProvider as macro*/
             echo $this->getselectedRowsQuery()->toCsv();
-        }, 'Employees' . today() . '.csv');
-        $this->notify('Transaction have been downloaded successfully!');
+        }, 'Transactions' . today() . '.csv');
+        $this->notify('Transactions have been downloaded successfully!');
         return $csv;
     }
 
     public function deleteSelected(): void
     {
-        $this->getselectedRowsQuery()->delete();
+        DB::beginTransaction();
+        $transactions = $this->getselectedRowsQuery()->get();
+        foreach ($transactions as $transaction) {
+            $order = $transaction->order;
+            $order->remain += $transaction->amount;
+            $order->getStatus();
+            $order->save();
+            $transaction->delete();
+        }
+        DB::commit();
         $this->selectedPage = false;
         $this->selectedAll = false;
+        $this->resetPage();
         $this->notify('Transaction has been deleted successfully!');
     }
 
-    public function edit($salaryId)
+    public function edit($transactionId)
     {
         $this->useCachedRows();
-        $this->salary = Salary::find($salaryId);
+        $this->transaction = Transcation::find($transactionId);
     }
 
     public function create()
     {
         $this->useCachedRows();
-        $this->salary = new Salary();
+        $this->transaction = new Transcation();
     }
 
     public function updateOrCreate()
     {
+        DB::beginTransaction();
         $this->validate();
-        if (!$this->salary->with) {
-            $this->salary->with_value = 0;
-            $this->salary->with = 1;
-        }
-        $this->salary->save();
-        $this->notify('Salary has been saved successfully!');
+        $this->transaction->save();
+        DB::commit();
+        $this->notify('Transaction has been saved successfully!');
     }
 
     public function toggleAdvancedSearch(): void
@@ -114,39 +121,35 @@ class SalIndex extends Component
     #use cashing in the same request
     public function getRowsQueryProperty()
     {
-        $query = Salary::query()->with('employee');
         // searching
+        $query = Transcation::query()
+            ->with('order.client');
+
         $query->when($this->filters['search'] ?? null, function ($query) {
-            $query->whereHas('employee', function ($query) {
-                return $query->byNameNickName($this->filters['search']);
+            $query->whereHas('order.client', function ($query) {
+                $query->search('name', $this->filters['search']);
             });
         });
         //filters
-        $query = $query->when($this->filters['with'] ?? null, function ($query) {
-            $query->where('with', $this->filters['with']);
-        });
 
-        $query = $query->when($this->filters['amount_min'] ?? null, function ($query) {
+        $query->when($this->filters['amount_min'] ?? null, function ($query) {
             $query->where('amount', '>', $this->filters['amount_min']);
         });
-
-        $query = $query->when($this->filters['amount_max'] ?? null, function ($query) {
+        $query->when($this->filters['amount_max'] ?? null, function ($query) {
             $query->where('amount', '<=', $this->filters['amount_max']);
         });
-
-        $query = $query->when($this->filters['date_start'] ?? null, function ($query) {
+        $query->when($this->filters['date'] ?? null, function ($query) {
             $query->whereDate('date', '>', $this->filters['date_start']);
         });
-
-        $query = $query->when($this->filters['date_end'] ?? null, function ($query) {
+        $query->when($this->filters['date_end'] ?? null, function ($query) {
             $query->where('date', '<=', $this->filters['date_end']);
         });
 
+        $query->when($this->filters['order_id'] ?? null, function ($query) {
+            $query->where('order_id', $this->filters['order_id']);
+        });
         // sorting
-        $query = $this->applySorting($query);
-
-
-        return $query;
+        return $this->applySorting($query);
     }
 
     public function getRowsProperty()
@@ -162,13 +165,12 @@ class SalIndex extends Component
             $this->selectPageRows();
         }
 
-        if (!$this->employees) {
-            $this->employees = Employee::select('id', 'name', 'nickname', 'salary')->get();
+        if (!$this->orders) {
+            $this->orders = Order::select('id')->get();
         }
 
-        return view('livewire.salary.sal-index', [
-            'models'    => $this->rows,
-            'employees' => $this->employees,
+        return view('livewire.transaction.tra-index', [
+            'models' => $this->rows,
         ])
             ->extends('layouts.app')
             ->section('content');

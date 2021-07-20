@@ -10,14 +10,16 @@ use App\Http\Livewire\Client\CliIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
 use App\Http\Livewire\Inventory\InvIndex;
+use App\Http\Livewire\Order\OrdCreate;
+use App\Http\Livewire\Order\OrdIndex;
 use App\Http\Livewire\Product\ProCreate;
 use App\Http\Livewire\Product\ProIndex;
 use App\Http\Livewire\ProductCategory\PCatIndex;
 use App\Http\Livewire\Profile\Show;
 use App\Http\Livewire\Salary\SalIndex;
 use App\Http\Livewire\Season\SeaIndex;
-use App\Http\Livewire\Transaction\AdvancedIndex;
-use App\Http\Livewire\Transaction\Index;
+use App\Http\Livewire\Transaction\TraCreate;
+use App\Http\Livewire\Transaction\TraIndex;
 use App\Http\Livewire\User\Create;
 use Illuminate\Support\Facades\Route;
 
@@ -46,8 +48,6 @@ Route::group([
     Route::get('/', Dashboard::class)->name('dashboard');
     Route::get('/profile', Show::class)->name('profile.show');
     Route::get('/user/create', Create::class)->name('user.create');
-    Route::get('/transactions', Index::class)->name('transaction.index');
-    Route::get('/transactions/advanced', AdvancedIndex::class)->name('transaction.advanced-index');
     Route::group([
 
         'prefix' => 'employees',
@@ -83,7 +83,15 @@ Route::group([
         Route::get('/', CliIndex::class)->name('index');
     });
 
+    Route::group([
+        'prefix' => 'orders',
+        'as'     => 'orders.',
+    ], function () {
+        Route::get('/', OrdIndex::class)->name('index');
+        Route::get('/create', OrdCreate::class)->name('create');
+    });
 
+    Route::get('/transactions', TraIndex::class)->name('transactions.index');
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');
 });
 

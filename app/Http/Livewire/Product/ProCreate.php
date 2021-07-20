@@ -43,16 +43,6 @@ class ProCreate extends Component
     }
 
 
-    public function hydrate()
-    {
-        $this->dispatchBrowserEvent('updating');
-    }
-
-    public function dehydrate()
-    {
-        $this->dispatchBrowserEvent('updated');
-    }
-
     public function showInventories()
     {
         $this->inventories = [];
