@@ -118,22 +118,23 @@ class CliIndex extends Component
         //filters
 
         $query->when($this->filters['amount_min'] ?? null, function ($query) {
-            $query->select('client.*', DB::raw('SUM(orders.amount) as amount_sum'))
-                ->where('type', 'client')
-                ->join('orders', 'orders.user_id', '=', 'user.id')
-                ->withCount('orders')
-                ->groupBy('client.*')
+            $query->select(
+                'clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','avatar'
+                , DB::raw('SUM(orders.amount_after_discount) as amount_sum'))
+                ->join('orders', 'orders.client_id', '=', 'clients.id')
+                ->groupBy('clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','clients.avatar')
                 ->havingRaw('amount_sum > ?', [$this->filters['amount_min']]);
         });
 
         $query->when($this->filters['amount_max'] ?? null, function ($query) {
-            $query->select('client.*', DB::raw('SUM(orders.amount) as amount_sum'))
-                ->where('type', 'client')
-                ->join('orders', 'orders.user_id', '=', 'user.id')
-                ->withCount('orders')
-                ->groupBy('client.*')
+            $query->select(
+                'clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','avatar'
+                , DB::raw('SUM(orders.amount_after_discount) as amount_sum'))
+                ->join('orders', 'orders.client_id', '=', 'clients.id')
+                ->groupBy('clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','clients.avatar')
                 ->havingRaw('amount_sum <= ?', [$this->filters['amount_max']]);
         });
+
 
         $query->when($this->filters['date_start'] ?? null, function ($query) {
             $query->whereDate('worked_date', '>', $this->filters['date_start']);
