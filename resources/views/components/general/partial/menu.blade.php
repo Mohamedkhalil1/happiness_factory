@@ -102,6 +102,11 @@
                         'url'    => route('materials.index'),
                         'active' => isActive('materials.index')
                     ],
+                    [
+                        'title'  => 'Ores',
+                        'url'    => route('materials.ores.index'),
+                        'active' => isActive('materials.ores.index')
+                    ],
                 ]
             "></x-menu-item>
 
