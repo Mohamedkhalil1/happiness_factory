@@ -53,6 +53,11 @@ class Order extends Model
         return $this->hasMany(inventoryOrder::class);
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transcation::class);
+    }
+
     public function getStatus()
     {
         if (!$this->remain) {

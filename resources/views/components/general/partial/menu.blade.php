@@ -71,7 +71,7 @@
                     [
                         'title'  => 'All Orders',
                         'url'    => route('orders.index'),
-                        'active' => isActive('orders.index')
+                        'active' => isActive('orders.index') ||  isActive('orders.show')
                     ],
                     [
                         'title'  => 'Transactions',
