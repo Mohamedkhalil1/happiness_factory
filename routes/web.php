@@ -16,6 +16,7 @@ use App\Http\Livewire\Product\ProCreate;
 use App\Http\Livewire\Product\ProIndex;
 use App\Http\Livewire\ProductCategory\PCatIndex;
 use App\Http\Livewire\Profile\Show;
+use App\Http\Livewire\Provider\PrvIndex;
 use App\Http\Livewire\Salary\SalIndex;
 use App\Http\Livewire\Season\SeaIndex;
 use App\Http\Livewire\Transaction\TraCreate;
@@ -93,6 +94,7 @@ Route::group([
 
     Route::get('/transactions', TraIndex::class)->name('transactions.index');
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');
+    Route::get('/providers', PrvIndex::class)->name('providers.index');
 });
 
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');

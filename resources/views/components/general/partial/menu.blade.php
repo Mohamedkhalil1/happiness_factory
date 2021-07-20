@@ -86,15 +86,28 @@
                 ]
             "></x-menu-item>
 
+        <x-menu-item
+            title="Providers"
+            icon="bi bi-server"
+            :isSingle="false"
+            :items="
+                [
+                    [
+                        'title'  => 'Providers',
+                        'url'    => route('providers.index'),
+                        'active' => isActive('providers.index')
+                    ],
+                ]
+            "></x-menu-item>
 
         <x-menu-item
-            title="Client"
+            title="Clients"
             icon="bi bi-people"
             :isSingle="false"
             :items="
                 [
                     [
-                        'title'  => 'Client',
+                        'title'  => 'Clients',
                         'url'    => route('clients.index'),
                         'active' => isActive('clients.index')
                     ],

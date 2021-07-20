@@ -23,7 +23,7 @@ class ClientType extends BaseEnum
             case self::NORMAL:
                 return 'secondary';
             case self::VIP:
-                return 'primary';
+                return 'success';
             default:
                 return '';
         }

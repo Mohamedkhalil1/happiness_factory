@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Http\Livewire\Client;
+namespace App\Http\Livewire\Provider;
 
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
 use App\Models\Client;
-use Illuminate\Support\Facades\DB;
+use App\Models\Provider;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class CliIndex extends Component
+class PrvIndex extends Component
 {
     use WithFileUploads, WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
-    public string $pageTitle = 'Clients';
+    public string $pageTitle = 'Providers';
     public bool $showAdvancedSearch = false;
-    public Client $client;
+    public Provider $provider;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
-    protected $listeners = ['refreshClients', '$refresh'];
-
-    public $avatar;
+    protected $listeners = ['refreshProviders', '$refresh'];
 
     public array $filters = [
         'search'     => null,
@@ -36,14 +34,12 @@ class CliIndex extends Component
     public function rules(): array
     {
         return [
-            'client.name'        => 'required',
-            'client.type'        => 'nullable|between:1,2',
-            'client.address'     => 'nullable|string|max:255',
-            'client.phone'       => 'nullable|numeric|digits_between:11,13',
-            'client.worked_date' => 'nullable|date',
-            'client.details'     => 'nullable|string|max:64000',
-            'client.avatar'      => 'nullable|string',
-            'avatar'             => 'nullable|image|max:1048',
+            'provider.name'        => 'required',
+            'provider.type'        => 'nullable|between:1,2',
+            'provider.address'     => 'nullable|string|max:255',
+            'provider.phone'       => 'nullable|numeric|digits_between:11,13',
+            'provider.worked_date' => 'nullable|date',
+            'provider.details'     => 'nullable|string|max:64000',
         ];
     }
 
@@ -57,8 +53,8 @@ class CliIndex extends Component
         $csv = response()->streamDownload(function () {
             /* toCsv function you can get it in AppServiceProvider as macro*/
             echo $this->getselectedRowsQuery()->toCsv();
-        }, 'Client' . today() . '.csv');
-        $this->notify('Clients have been downloaded successfully!');
+        }, 'Providers' . today() . '.csv');
+        $this->notify('Providers have been downloaded successfully!');
         return $csv;
     }
 
@@ -68,28 +64,26 @@ class CliIndex extends Component
         $this->selectedPage = false;
         $this->selectedAll = false;
         $this->resetPage();
-        $this->notify('Clients has been deleted successfully!');
+        $this->notify('Providers has been deleted successfully!');
     }
 
-    public function edit($clientId)
+    public function edit($providerId)
     {
         $this->useCachedRows();
-        $this->client = Client::find($clientId);
+        $this->provider = Provider::find($providerId);
     }
 
     public function create()
     {
         $this->useCachedRows();
-        $this->client = new Client();
+        $this->provider = new Provider();
     }
 
     public function updateOrCreate()
     {
         $this->validate();
-        $this->avatar && $this->client->avatar = $this->avatar->store('/', 'files');
-
-        $this->client->save();
-        $this->notify('Client has been saved successfully!');
+        $this->provider->save();
+        $this->notify('Provider has been saved successfully!');
     }
 
     public function toggleAdvancedSearch(): void
@@ -112,40 +106,27 @@ class CliIndex extends Component
     public function getRowsQueryProperty()
     {
         // searching
-        $query = Client::query()
-            ->with('orders')
+        $query = Provider::query()
             ->search('name', $this->filters['search'] ?? null);
         //filters
-
-        $query->when($this->filters['amount_min'] ?? null, function ($query) {
-            $query->select('client.*', DB::raw('SUM(orders.amount) as amount_sum'))
-                ->where('type', 'client')
-                ->join('orders', 'orders.user_id', '=', 'user.id')
-                ->withCount('orders')
-                ->groupBy('client.*')
-                ->havingRaw('amount_sum > ?', [$this->filters['amount_min']]);
-        });
-
-        $query->when($this->filters['amount_max'] ?? null, function ($query) {
-            $query->select('client.*', DB::raw('SUM(orders.amount) as amount_sum'))
-                ->where('type', 'client')
-                ->join('orders', 'orders.user_id', '=', 'user.id')
-                ->withCount('orders')
-                ->groupBy('client.*')
-                ->havingRaw('amount_sum <= ?', [$this->filters['amount_max']]);
-        });
-
-        $query->when($this->filters['date_start'] ?? null, function ($query) {
-            $query->whereDate('worked_date', '>', $this->filters['date_start']);
-        });
-        $query->when($this->filters['date_end'] ?? null, function ($query) {
-            $query->where('worked_date', '<=', $this->filters['date_end']);
-        });
-        $query->when($this->filters['type'] ?? null, function ($query) {
+        $query = $query->when($this->filters['type'] ?? null, function ($query) {
             $query->where('type', $this->filters['type']);
         });
 
-        $query->when($this->filters['category_id'] ?? null, function ($query) {
+        $query = $query->when($this->filters['amount_min'] ?? null, function ($query) {
+            $query->where('salary', '>', $this->filters['amount_min']);
+        });
+        $query = $query->when($this->filters['amount_max'] ?? null, function ($query) {
+            $query->where('salary', '<=', $this->filters['amount_max']);
+        });
+        $query = $query->when($this->filters['date_start'] ?? null, function ($query) {
+            $query->whereDate('worked_date', '>', $this->filters['date_start']);
+        });
+        $query = $query->when($this->filters['date_end'] ?? null, function ($query) {
+            $query->where('worked_date', '<=', $this->filters['date_end']);
+        });
+
+        $query = $query->when($this->filters['category_id'] ?? null, function ($query) {
             $query->where('category_id', $this->filters['category_id']);
         });
         // sorting
@@ -166,11 +147,10 @@ class CliIndex extends Component
             $this->selectPageRows();
         }
 
-        return view('livewire.client.cli-index', [
+        return view('livewire.provider.prv-index', [
             'models' => $this->rows,
         ])
             ->extends('layouts.app')
             ->section('content');
     }
-
 }
