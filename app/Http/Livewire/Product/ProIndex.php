@@ -58,10 +58,10 @@ class ProIndex extends Component
 
     public function deleteSelected(): void
     {
-        $this->getselectedRowsQuery()->delete();
+        $this->getselectedRowsQuery()->whereDoesntHave('inventories.orders')->delete();
         $this->selectedPage = false;
         $this->selectedAll = false;
-        $this->notify('Products has been deleted successfully!');
+        $this->notify('Products has been deleted successfully!','#dc3545');
     }
 
     public function edit($productId)

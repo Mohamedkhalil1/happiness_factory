@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Order;
 
+use App\Enums\OrderStatus;
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
@@ -37,7 +38,7 @@ class OrdIndex extends Component
         $maxAmount = Order::find($this->orderId ?? 0)->remain ?? 0;
         return [
             'transaction.date'     => 'required',
-            'transaction.amount'   => 'required|numeric|max:'.$maxAmount,
+            'transaction.amount'   => 'required|numeric|max:' . $maxAmount,
             'transaction.note'     => 'nullable|string|max:255',
             'transaction.order_id' => 'required|exists:orders,id',
         ];
@@ -84,9 +85,14 @@ class OrdIndex extends Component
         if (!$order) {
             $this->notify('Orders is not found!');
         } else {
+            if ($order->status != OrderStatus::PENDING) {
+                $this->notify('You can not delete this order.','#dc3545');
+                return;
+            }
             $order->delete();
             $this->resetFilters();
-            $this->notify('Orders has been deleted successfully!');
+            $this->notify('Order has been deleted successfully!');
+
         }
     }
 

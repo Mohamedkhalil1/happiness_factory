@@ -64,7 +64,7 @@ class CliIndex extends Component
 
     public function deleteSelected(): void
     {
-        $this->getselectedRowsQuery()->delete();
+        $this->getselectedRowsQuery()->whereDoesntHave('orders')->delete();
         $this->selectedPage = false;
         $this->selectedAll = false;
         $this->resetPage();
