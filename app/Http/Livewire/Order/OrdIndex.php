@@ -7,6 +7,7 @@ use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
 use App\Models\Order;
+use App\Models\Transcation;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -17,6 +18,7 @@ class OrdIndex extends Component
 
     public string $pageTitle = 'Orders';
     public bool $showAdvancedSearch = false;
+    public Transcation $transaction;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshOrders', '$refresh'];
 
@@ -29,6 +31,29 @@ class OrdIndex extends Component
         'status'     => null,
     ];
 
+    public function rules(): array
+    {
+        return [
+            'transaction.date'     => 'required',
+            'transaction.amount'   => 'required|numeric|max:9999999',
+            'transaction.note'     => 'nullable|string|max:255',
+            'transaction.order_id' => 'required|exists:orders,id',
+        ];
+    }
+
+    public function mount()
+    {
+        $this->transaction = new Transcation();
+    }
+
+
+    public function storeTransaction($orderId)
+    {
+        $this->transaction->order_id = $orderId;
+        $this->validate();
+        $this->transaction->save();
+        $this->notify('Transaction has been done successfully');
+    }
 
     public function updatedFilters()
     {

@@ -91,14 +91,7 @@ Route::group([
         Route::get('/create', OrdCreate::class)->name('create');
     });
 
-    Route::group([
-        'prefix' => 'transactions',
-        'as'     => 'transactions.',
-    ], function () {
-        Route::get('/', TraIndex::class)->name('index');
-        Route::get('/create', TraCreate::class)->name('create');
-    });
-
+    Route::get('/transactions', TraIndex::class)->name('transactions.index');
     Route::get('/seasons', SeaIndex::class)->name('seasons.index');
 });
 

@@ -100,6 +100,9 @@
                 <x-table.heading>
                     <x-base.checkbox wire:model="selectedPage"/>
                 </x-table.heading>
+                <x-table.heading>
+                    ID
+                </x-table.heading>
 
                 <x-table.heading>
                     Avatar
@@ -122,7 +125,7 @@
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('address')" id="address"
                                  :direction="$sortDirection">
-                    address
+                    Address
                 </x-table.heading>
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('amount_before_discount')"
@@ -190,6 +193,9 @@
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
                         </x-table.cell>
                         <x-table.cell>
+                            {{ $model->id }}
+                        </x-table.cell>
+                        <x-table.cell>
                             @if(isset($model->client->avatar) && $model->client->avatar)
                                 <x-base.avatar imageUrl="{{ getImageUrl($model->client->avatar) }}"/>
                             @endif
@@ -211,15 +217,26 @@
                         <x-table.cell>{{ formatMoney($model->remain) }}</x-table.cell>
 
                         <x-table.cell>
-                            @if(!$model->paid)
-                                <span style="cursor: pointer" class="text-muted"
-                                      onclick="confirm('are you sure ?') || event.stopImmediatePropagation()"
-                                      wire:click="delete({{$model->id}})">
-                               <x-icons.delete class="text-muted"/>
-                              </span>
+                            @if(!$model->paid || $model->remain)
+
+                                @if($model->remain)
+                                    <a href="javascript:" title="transaction" class="text-muted mr-3"
+                                       style="cursor: pointer"
+                                       data-bs-toggle="modal" data-bs-target="#model">
+                                        <x-icons.money class="text-muted" />
+                                    </a>
+                                @endif
+
+                                @if(!$model->paid)
+                                    <a href="javascript:" title="delete" style="cursor: pointer" class="text-muted"
+                                       onclick="confirm('are you sure ?') || event.stopImmediatePropagation()"
+                                       wire:click="delete({{$model->id}})">
+                                        <x-icons.delete class="text-muted"/>
+                                    </a>
+                                @endif
+
                             @else
                                 <p class="text-muted">NO ACTIONS</p>
-
                             @endif
                         </x-table.cell>
                     </x-table.row>
@@ -238,6 +255,41 @@
             {{ $models->links() }}
         </div>
     </x-base.card>
+
+    <x-base.modal id="model" size="lg" formAction="storeTransaction('{{$model->id}}')">
+        <x-slot name="title">
+            Transaction
+        </x-slot>
+        <x-slot name="content">
+            <x-base.grid>
+                <div class="col-md-4">
+                    <x-form.label required title="Date"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.date-time id="date" name="transaction.date" type="text"/>
+                </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label required title="Amount"></x-form.label>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input lazy required name="transaction.amount" type="text"
+                                  inputGroupText="EGP"></x-form.input>
+                </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label title="Note"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.textarea wire:model="transaction.note" title="Note"/>
+                </x-form.form-group>
+
+            </x-base.grid>
+        </x-slot>
+        <x-slot name="footer">
+            <x-base.button type="submit" @click="document.getElementById('form-id').submit()">Save</x-base.button>
+        </x-slot>
+    </x-base.modal>
 </div>
 
 

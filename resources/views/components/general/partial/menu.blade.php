@@ -74,6 +74,11 @@
                         'active' => isActive('orders.index')
                     ],
                     [
+                        'title'  => 'Transactions',
+                        'url'    => route('transactions.index'),
+                        'active' => isActive('transactions.index')
+                    ],
+                    [
                         'title'  => 'Make Order',
                         'url'    => route('orders.create'),
                         'active' => isActive('orders.create')
