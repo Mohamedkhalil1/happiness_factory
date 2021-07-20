@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Livewire\Materials\Materials;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +16,8 @@ class Ore extends Model
         'width',
         'weight',
         'quantity',
-        'material_id'
+        'material_id',
+        'image',
     ];
 
     public function material(): BelongsTo
