@@ -87,7 +87,7 @@
             "></x-menu-item>
 
         <x-menu-item
-            title="Providers"
+            title="Supplies"
             icon="bi bi-server"
             :isSingle="false"
             :items="
@@ -96,6 +96,16 @@
                         'title'  => 'Providers',
                         'url'    => route('providers.index'),
                         'active' => isActive('providers.index')
+                    ],
+                    [
+                        'title'  => 'Materials',
+                        'url'    => route('materials.index'),
+                        'active' => isActive('materials.index')
+                    ],
+                    [
+                        'title'  => 'Ores',
+                        'url'    => route('materials.ores.index'),
+                        'active' => isActive('materials.ores.index')
                     ],
                 ]
             "></x-menu-item>
