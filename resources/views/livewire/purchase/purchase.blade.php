@@ -86,12 +86,12 @@
                             <x-form.form-group col="6">
                                 <x-form.label title="Min Quantity"/>
                                 <x-form.input lazy name="filters.quantity_min" type="text"
-                                              />
+                                />
                             </x-form.form-group>
                             <x-form.form-group col="6">
                                 <x-form.label title="Max Quantity"/>
                                 <x-form.input lazy name="filters.quantity_max" type="text"
-                                              />
+                                />
                             </x-form.form-group>
 
                             <x-form.form-group col="6">
@@ -112,6 +112,10 @@
                 <x-table.heading>
                     <x-base.checkbox wire:model="selectedPage"/>
                 </x-table.heading>
+                <x-table.heading>
+                    ID
+                </x-table.heading>
+
                 <x-table.heading>
                     Material
                 </x-table.heading>
@@ -196,6 +200,12 @@
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
                         </x-table.cell>
 
+                        <x-table.cell>
+                            <a href="{{ route('materials.ores.purchase.show',$model->id) }}">
+                                {{ $model->id }}
+                            </a>
+                        </x-table.cell>
+
                         <x-table.cell>{{ $model->ore->material->name ?? '' }}
                             <div class="text-muted">({{ $model->ore->companite() }})</div>
                         </x-table.cell>
@@ -219,12 +229,18 @@
                         <x-table.cell>
                             @if($model->status != \App\Enums\OrderStatus::DONE)
                                 @if($model->status != \App\Enums\OrderStatus::DONE)
-                                    <x-icons.money class="text-muted"/>
+                                    <a href="javascript:" title="transfer" class="text-muted mr-3"
+                                       wire:click="storeModelId({{$model->id}})"
+                                       style="cursor: pointer"
+                                       data-bs-toggle="modal" data-bs-target="#transfer">
+                                        <x-icons.money class="text-muted"/>
+                                    </a>
                                 @endif
 
                                 @if($model->status == \App\Enums\OrderStatus::PENDING)
 
-                                    <a href="javascript:" title="edit" wire:click="edit({{$model->id}})" style="cursor: pointer"
+                                    <a href="javascript:" title="edit" wire:click="edit({{$model->id}})"
+                                       style="cursor: pointer"
                                        data-bs-toggle="modal" data-bs-target="#model">
                                         <x-icons.edit/>
                                     </a>
@@ -287,8 +303,8 @@
                     <x-form.label required title="Ores"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect  name="purchase.ore_id" wire:model="purchase.ore_id" :disabled="$edit">
-                        <x-select.option  value="0">Select Ore</x-select.option>
+                    <x-base.uselect name="purchase.ore_id" wire:model="purchase.ore_id" :disabled="$edit">
+                        <x-select.option value="0">Select Ore</x-select.option>
                         @foreach($ores as $ore)
                             <x-select.option disbaled value="{{ $ore->id }}">{{ $ore->companite() }}</x-select.option>
                         @endforeach
@@ -329,6 +345,42 @@
                 <x-form.form-group col="8">
                     <x-form.input type="number" required lazy class="round"
                                   readonly name="purchase.total_amount" inputGroupText="EGP"></x-form.input>
+                </x-form.form-group>
+
+            </x-base.grid>
+        </x-slot>
+        <x-slot name="footer">
+            <x-base.button type="submit" @click="document.getElementById('form-id').submit()">Save</x-base.button>
+        </x-slot>
+    </x-base.modal>
+
+
+    <x-base.modal id="transfer" size="lg" formAction="makeTransfer">
+        <x-slot name="title">
+            Transaction
+        </x-slot>
+        <x-slot name="content">
+            <x-base.grid>
+                <div class="col-md-4">
+                    <x-form.label required title="Date"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.date-time id="date" name="transfer.date" type="text"/>
+                </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label required title="Amount"></x-form.label>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input lazy required name="transfer.amount" type="text"
+                                  inputGroupText="EGP"></x-form.input>
+                </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label title="Note"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.textarea wire:model="transfer.note" title="Note"/>
                 </x-form.form-group>
 
             </x-base.grid>

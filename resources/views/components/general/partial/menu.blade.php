@@ -115,7 +115,7 @@
                       [
                         'title'  => 'Buy Ores',
                         'url'    => route('materials.ores.buy'),
-                        'active' => isActive('materials.ores.buy')
+                        'active' => isActive('materials.ores.buy') ||  isActive('materials.ores.purchase.show')
                     ],
                 ]
             "></x-menu-item>
