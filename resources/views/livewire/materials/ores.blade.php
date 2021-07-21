@@ -209,7 +209,7 @@
             {{ $models->links() }}
         </div>
     </x-base.card>
-    {{--MODAL User --}}
+
     <x-base.modal id="model" size="lg" formAction="updateOrCreate">
         <x-slot name="title">
             Employee

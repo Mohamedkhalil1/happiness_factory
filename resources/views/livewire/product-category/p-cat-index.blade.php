@@ -9,7 +9,7 @@
             {{--SEARCH--}}
             <x-base.grid-col col="3">
                 <x-form.input lazy="true" type="text" class="round" name="filters.search"
-                              placeholder="Search Categories..."/>
+                              placeholder="search categories..."/>
             </x-base.grid-col>
             <x-base.grid-col col="3"></x-base.grid-col>
             {{--LEFT ACTIONS--}}

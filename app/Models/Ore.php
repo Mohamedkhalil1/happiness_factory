@@ -24,4 +24,13 @@ class Ore extends Model
     {
         return $this->belongsTo(Material::class);
     }
+
+    public function companite(): string
+    {
+        return
+              'color: '     . $this->color
+            . ', height: '   . $this->height
+            . ', width: '    . $this->width
+            . ', weight: '     . $this->weight;
+    }
 }

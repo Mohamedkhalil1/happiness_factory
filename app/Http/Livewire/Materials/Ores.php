@@ -83,7 +83,6 @@ class Ores extends Component
     public function updateOrCreate()
     {
         $this->validate();
-
         $this->image && $this->ore->image = $this->image->store('/', 'files');
         $this->ore->save();
         $this->notify('Ore has been saved successfully!');
