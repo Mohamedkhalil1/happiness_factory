@@ -10,6 +10,7 @@ use App\Http\Livewire\Datatable\WithSorting;
 use App\Models\Material;
 use App\Models\Provider;
 use App\Models\Purchase as PurchaseModel;
+use App\Models\Transfer;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -25,6 +26,8 @@ class Purchase extends Component
     protected $ores = [];
     public $material_id;
     public PurchaseModel $purchase;
+    public Transfer $transfer;
+    public int $purchaseId;
     public bool $edit = false;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshPurchases', '$refresh'];
@@ -50,8 +53,18 @@ class Purchase extends Component
             'purchase.amount'       => 'required|numeric|min:1|max:999999',
             'purchase.quantity'     => 'required|integer|min:1|max:9999999',
             'purchase.total_amount' => 'required|numeric|min:1|max:999999',
+            'transfer.date'         => 'nullable',
+            'transfer.amount'       => 'nullable',
+            'transfer.note'         => 'nullable',
+            'transfer.purchase_id'  => 'nullable',
         ];
     }
+
+    public function mount()
+    {
+        $this->transfer = new Transfer();
+    }
+
 
     public function updatedPurchaseAmount($value)
     {
@@ -132,6 +145,30 @@ class Purchase extends Component
         $this->purchase->remain = $this->purchase->total_amount;
         $this->purchase->save();
         $this->notify('Purchase has been saved successfully!');
+    }
+
+    public function storeModelId($id)
+    {
+        $this->purchaseId = $id;
+    }
+
+    public function makeTransfer()
+    {
+        $this->transfer->purchase_id = $this->purchaseId;
+        $purchase = PurchaseModel::find($this->purchaseId);
+        if (!$purchase) {
+            $this->notify('purchase is not found');
+            return;
+        }
+        $this->validate([
+            'transfer.date'        => 'required|date',
+            'transfer.amount'      => 'required|numeric|min:1|max:' . $purchase->remain,
+            'transfer.note'        => 'nullable|string|max:255',
+            'transfer.purchase_id' => 'required|exists:purchases,id',
+        ]);
+        $this->transfer->save();
+        $this->transfer = new Transfer();
+        $this->notify('Transfer has been done successfully');
     }
 
     public function toggleAdvancedSearch(): void
