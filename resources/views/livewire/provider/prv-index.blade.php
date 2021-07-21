@@ -74,7 +74,7 @@
                             </x-form.form-group>
 
                             <x-form.form-group col="6">
-                                <x-form.label :required="false" title="Min Amount"/>
+                                <x-form.label :required="false" title="Min Amount (for total amount)"/>
                                 <x-form.input :required="false" lazy="true" name="filters.amount_min" type="text"
                                               inputGroupText="EGP"/>
                             </x-form.form-group>
@@ -85,7 +85,7 @@
                             </x-form.form-group>
 
                             <x-form.form-group col="6">
-                                <x-form.label :required="false" title="Max Amount"/>
+                                <x-form.label :required="false" title="Max Amount (for total amount)"/>
                                 <x-form.input :required="false" lazy="true" name="filters.amount_max" type="text"
                                               inputGroupText="EGP"/>
                             </x-form.form-group>
@@ -117,6 +117,18 @@
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('type')" id="type"
                                  :direction="$sortDirection">
                     Type
+                </x-table.heading>
+
+                <x-table.heading>
+                    Total Amount
+                </x-table.heading>
+
+                <x-table.heading>
+                    Paid Amount
+                </x-table.heading>
+
+                <x-table.heading>
+                    Remain
                 </x-table.heading>
 
                 <x-table.heading>
@@ -176,6 +188,10 @@
                                 {{ \App\Enums\ClientType::name($model->type) }}
                             </x-base.badge>
                         </x-table.cell>
+                        <x-table.cell>{{ $model->total_amount }}</x-table.cell>
+                        <x-table.cell>{{ $model->paid_amount }}</x-table.cell>
+                        <x-table.cell>{{ $model->remain }}</x-table.cell>
+
                         <x-table.cell>{{ $model->phone }}</x-table.cell>
                         <x-table.cell>{{ $model->address }}</x-table.cell>
                         <x-table.cell>{{ formatDate($model->worked_date) }}</x-table.cell>

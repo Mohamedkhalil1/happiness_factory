@@ -74,6 +74,12 @@
             :items="
                 [
                     [
+                        'title'  => 'Clients',
+                        'url'    => route('clients.index'),
+                        'active' => isActive('clients.index')
+                    ],
+
+                    [
                         'title'  => 'All Orders',
                         'url'    => route('orders.index'),
                         'active' => isActive('orders.index') ||  isActive('orders.show')
@@ -127,21 +133,6 @@
 
                 ]
             "></x-menu-item>
-
-        <x-menu-item
-            title="Clients"
-            icon="bi bi-people-fill"
-            :isSingle="false"
-            :items="
-                [
-                    [
-                        'title'  => 'Clients',
-                        'url'    => route('clients.index'),
-                        'active' => isActive('clients.index')
-                    ],
-                ]
-            "></x-menu-item>
-
     </ul>
 </div>
 <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>

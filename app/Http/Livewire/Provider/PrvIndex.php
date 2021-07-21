@@ -8,6 +8,7 @@ use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
 use App\Models\Client;
 use App\Models\Provider;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -113,12 +114,25 @@ class PrvIndex extends Component
             $query->where('type', $this->filters['type']);
         });
 
-        $query = $query->when($this->filters['amount_min'] ?? null, function ($query) {
-            $query->where('salary', '>', $this->filters['amount_min']);
+        $query->when($this->filters['amount_min'] ?? null, function ($query) {
+            $query->select(
+                'providers.id', 'providers.name', 'providers.type', 'providers.address', 'providers.phone', 'providers.worked_date'
+                , DB::raw('SUM(purchases.total_amount) as amount_sum'))
+                ->join('purchases', 'purchases.provider_id', '=', 'providers.id')
+                ->groupBy('providers.id', 'providers.name', 'providers.type', 'providers.address', 'providers.phone', 'providers.worked_date')
+                ->havingRaw('amount_sum > ?', [$this->filters['amount_min']]);
         });
-        $query = $query->when($this->filters['amount_max'] ?? null, function ($query) {
-            $query->where('salary', '<=', $this->filters['amount_max']);
+
+        $query->when($this->filters['amount_max'] ?? null, function ($query) {
+            $query->select(
+                'providers.id', 'providers.name', 'providers.type', 'providers.address', 'providers.phone', 'providers.worked_date'
+                , DB::raw('SUM(purchases.total_amount) as amount_sum'))
+                ->join('purchases', 'purchases.provider_id', '=', 'providers.id')
+                ->groupBy('providers.id', 'providers.name', 'providers.type', 'providers.address', 'providers.phone', 'providers.worked_date')
+                ->havingRaw('amount_sum <= ?', [$this->filters['amount_max']]);
         });
+
+
         $query = $query->when($this->filters['date_start'] ?? null, function ($query) {
             $query->whereDate('worked_date', '>', $this->filters['date_start']);
         });

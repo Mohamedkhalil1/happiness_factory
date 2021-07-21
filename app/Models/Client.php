@@ -25,10 +25,14 @@ class Client extends Model
         return $this->orders->sum('amount_after_discount');
     }
 
-
     public function getPaidAmountAttribute()
     {
         return $this->orders->sum('amount_after_discount') - $this->orders->sum('remain');
+    }
+
+    public function getRemainAttribute()
+    {
+        return $this->orders->sum('remain');
     }
 
     public function orders(): HasMany
