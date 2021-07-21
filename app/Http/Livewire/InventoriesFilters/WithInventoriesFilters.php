@@ -28,7 +28,7 @@ trait WithInventoriesFilters
         $this->reset('filters');
     }
 
-#use cashing in the same request
+    #use cashing in the same request
     public function getRowsQueryProperty()
     {
         // with
@@ -37,26 +37,26 @@ trait WithInventoriesFilters
 
         //filters
 
-        $query = $query->when($this->filters['amount_min'] ?? null, function ($query) {
+        $query->when($this->filters['amount_min'] ?? null, function ($query) {
             $query->where('price', '>', $this->filters['amount_min']);
         });
-        $query = $query->when($this->filters['amount_max'] ?? null, function ($query) {
+        $query->when($this->filters['amount_max'] ?? null, function ($query) {
             $query->where('price', '<=', $this->filters['amount_max']);
         });
 
-        $query = $query->when($this->filters['quantity_min'] ?? null, function ($query) {
+        $query->when($this->filters['quantity_min'] ?? null, function ($query) {
             $query->where('quantity', '>', $this->filters['quantity_min']);
         });
-        $query = $query->when($this->filters['quantity_max'] ?? null, function ($query) {
+        $query->when($this->filters['quantity_max'] ?? null, function ($query) {
             $query->where('quantity', '<=', $this->filters['quantity_max']);
         });
 
-        $query = $query->when($this->filters['color'] ?? null, function ($query) {
+        $query->when($this->filters['color'] ?? null, function ($query) {
             $colors = explode(',', $this->filters['color']);
             $query->whereIn('color', $colors);
         });
 
-        $query = $query->when($this->filters['size'] ?? null, function ($query) {
+        $query->when($this->filters['size'] ?? null, function ($query) {
             $sizes = explode(',', $this->filters['size']);
             $query->whereIn('size', $sizes);
         });
@@ -78,7 +78,6 @@ trait WithInventoriesFilters
             });
         });
         // sorting
-        $query = $this->applySorting($query);
-        return $query;
+        return $this->applySorting($query);
     }
 }

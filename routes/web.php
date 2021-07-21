@@ -20,6 +20,7 @@ use App\Http\Livewire\Product\ProIndex;
 use App\Http\Livewire\ProductCategory\PCatIndex;
 use App\Http\Livewire\Profile\Show;
 use App\Http\Livewire\Provider\PrvIndex;
+use App\Http\Livewire\Purchase\Purchase;
 use App\Http\Livewire\Salary\SalIndex;
 use App\Http\Livewire\Season\SeaIndex;
 use App\Http\Livewire\Transaction\TraCreate;
@@ -102,6 +103,7 @@ Route::group([
     ], function () {
         Route::get('/', Materials::class)->name('index');
         Route::get('/ores', Ores::class)->name('ores.index');
+        Route::get('/buy/ores', Purchase::class)->name('ores.buy');
     });
 
     Route::get('/transactions', TraIndex::class)->name('transactions.index');

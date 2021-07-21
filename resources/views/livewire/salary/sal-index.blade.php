@@ -7,7 +7,7 @@
             {{--SEARCH--}}
             <x-base.grid-col col="3">
                 <x-form.input lazy="true" type="text" class="round" name="filters.search"
-                              placeholder="Search employee name...">
+                              placeholder="search employee name...">
                 </x-form.input>
             </x-base.grid-col>
             {{--ADVANCED SEARCH--}}

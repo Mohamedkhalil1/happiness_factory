@@ -49,6 +49,11 @@
                         'url'    => route('products.categories.index'),
                         'active' => isActive('products.categories.index')
                     ],
+                     [
+                        'title'  => 'Seasons',
+                        'url'    => route('seasons.index'),
+                        'active' => isActive('seasons.index')
+                    ],
                     [
                         'title'  => 'Products',
                         'url'    => route('products.index'),
@@ -64,7 +69,7 @@
 
         <x-menu-item
             title="Orders"
-            icon="bi bi-cart4"
+            icon="bi bi-cart-plus-fill"
             :isSingle="false"
             :items="
                 [
@@ -107,12 +112,17 @@
                         'url'    => route('materials.ores.index'),
                         'active' => isActive('materials.ores.index')
                     ],
+                      [
+                        'title'  => 'Buy Ores',
+                        'url'    => route('materials.ores.buy'),
+                        'active' => isActive('materials.ores.buy')
+                    ],
                 ]
             "></x-menu-item>
 
         <x-menu-item
             title="Clients"
-            icon="bi bi-people"
+            icon="bi bi-people-fill"
             :isSingle="false"
             :items="
                 [
@@ -123,12 +133,6 @@
                     ],
                 ]
             "></x-menu-item>
-        <x-menu-item
-            title="Seasons"
-            icon="bi bi-stack"
-            url="{{ route('seasons.index') }}"
-            isActive="{{ isActive('seasons.index') }}"
-            :isSingle="true"></x-menu-item>
 
     </ul>
 </div>
