@@ -30,6 +30,12 @@
     </x-base.grid-col>
 
     <x-base.grid-col>
+        <x-alerts.success icon="bi bi-cash">
+            Actual Amount: {{ formatMoney($model->paid_amount) }}
+        </x-alerts.success>
+    </x-base.grid-col>
+
+    <x-base.grid-col>
         <x-alerts.danger icon="bi bi-cash">
             Remain Amount: {{ formatMoney($model->remain) }}
         </x-alerts.danger>

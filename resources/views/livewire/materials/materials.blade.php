@@ -2,7 +2,7 @@
     @section('title',$pageTitle)
     <x-base.card title="{{ $pageTitle }}">
         {{--PROGRESS BAR--}}
-        <x-general.progress-bar />
+        <x-general.progress-bar/>
 
         {{--RIGHT ACTIONS--}}
         <x-base.grid class="mb-3">
@@ -57,10 +57,8 @@
                     Name
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortByQuantity"
-                                 id="description"
-                                 :direction="$sortDirection">
-                    Description
+                <x-table.heading>
+                    Quantity
                 </x-table.heading>
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('description')"
@@ -115,7 +113,6 @@
                         <x-table.cell>
                             {{ $model->quantity }}
                         </x-table.cell>
-
 
                         <x-table.cell>{{ $model->description }} </x-table.cell>
 

@@ -58,7 +58,7 @@ class Materials extends Component
     {
         $this->useCachedRows();
         $this->material = Material::find($materialId);
-        if (!$this->category) {
+        if (!$this->material) {
             $this->notify('Materials is not found!', "#ff8888");
         }
     }
