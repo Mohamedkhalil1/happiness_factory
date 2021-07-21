@@ -22,6 +22,7 @@ use App\Http\Livewire\Profile\Show;
 use App\Http\Livewire\Provider\PrvIndex;
 use App\Http\Livewire\Purchase\Purchase;
 use App\Http\Livewire\Purchase\PurchaseShow;
+use App\Http\Livewire\Purchase\Transfer;
 use App\Http\Livewire\Salary\SalIndex;
 use App\Http\Livewire\Season\SeaIndex;
 use App\Http\Livewire\Transaction\TraCreate;
@@ -106,6 +107,7 @@ Route::group([
         Route::get('/ores', Ores::class)->name('ores.index');
         Route::get('/buy/ores', Purchase::class)->name('ores.buy');
         Route::get('/ores/purchase/{id}', PurchaseShow::class)->name('ores.purchase.show');
+        Route::get('/transfers', Transfer::class)->name('transfers.index');
     });
 
 

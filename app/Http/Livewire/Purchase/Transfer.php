@@ -1,57 +1,57 @@
 <?php
 
-namespace App\Http\Livewire\Transaction;
+namespace App\Http\Livewire\Purchase;
 
+use App\Enums\OrderStatus;
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
-use App\Models\Order;
-use App\Models\Transcation;
+use App\Models\Purchase as PurchaseModel;
+use App\Models\Transfer as TransferModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class TraIndex extends Component
+class Transfer extends Component
 {
     use WithFileUploads, WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
-    public string $pageTitle = 'Transactions';
+    public string $pageTitle = 'Transfers';
     public bool $showAdvancedSearch = false;
-    public $orders;
-    public Transcation $transaction;
+    public $purchases;
+    public TransferModel $transfer;
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
-    protected $listeners = ['refreshTransactions', '$refresh'];
+    protected $listeners = ['refreshTransfer', '$refresh'];
 
     public array $filters = [
-        'search'     => null,
-        'order_id'   => null,
-        'amount_min' => null,
-        'amount_max' => null,
-        'date_start' => null,
-        'date_end'   => null,
+        'search'      => null,
+        'purchase_id' => null,
+        'amount_min'  => null,
+        'amount_max'  => null,
+        'date_start'  => null,
+        'date_end'    => null,
     ];
 
     public function mount()
     {
-        $this->transaction = new Transcation();
+        $this->transfer = new TransferModel();
     }
 
     public function rules(): array
     {
         $remain = 0;
-        if (isset($this->transaction)) {
-            $remain = Order::find($this->transaction->order_id)->remain ?? 0;
+        if (isset($this->transfer)) {
+            $remain = PurchaseModel::find($this->transfer->purchase_id)->remain ?? 0;
         }
         return [
-            'transaction.date'     => 'required',
-            'transaction.amount'   => 'required|numeric|max:' . $remain,
-            'transaction.note'     => 'nullable|string|max:255',
-            'transaction.order_id' => 'required|exists:orders,id',
+            'transfer.date'        => 'required',
+            'transfer.amount'      => 'required|numeric|max:' . $remain,
+            'transfer.note'        => 'nullable|string|max:255',
+            'transfer.purchase_id' => 'required|exists:purchases,id',
         ];
     }
-
 
     public function updatedFilters()
     {
@@ -63,48 +63,47 @@ class TraIndex extends Component
         $csv = response()->streamDownload(function () {
             /* toCsv function you can get it in AppServiceProvider as macro*/
             echo $this->getselectedRowsQuery()->toCsv();
-        }, 'Transactions' . today() . '.csv');
-        $this->notify('Transactions have been downloaded successfully!');
+        }, 'Transfers' . today() . '.csv');
+        $this->notify('Transfers have been downloaded successfully!');
         return $csv;
     }
 
     public function deleteSelected(): void
     {
         DB::beginTransaction();
-        $transactions = $this->getselectedRowsQuery()->get();
-        foreach ($transactions as $transaction) {
-            $order = $transaction->order;
-            $order->remain += $transaction->amount;
-            $order->getStatus();
-            $order->save();
-            $transaction->delete();
+        $transfers = $this->getselectedRowsQuery()->get();
+        foreach ($transfers as $transfer) {
+            $purchase = $transfer->purchase;
+            $purchase->remain += $transfer->amount;
+            $purchase->paid_amount -= $transfer->amount;
+            $purchase->getStatus();
+            $purchase->save();
+            $transfer->delete();
         }
         DB::commit();
         $this->selectedPage = false;
         $this->selectedAll = false;
         $this->resetPage();
-        $this->notify('Transaction has been deleted successfully!');
+        $this->notify('Transfers has been deleted successfully!');
     }
 
-    public function edit($transactionId)
+    public function edit($transferId)
     {
         $this->useCachedRows();
-        $this->transaction = Transcation::find($transactionId);
+        $this->transfer = TransferModel::find($transferId);
     }
 
     public function create()
     {
         $this->useCachedRows();
-        $this->transaction = new Transcation();
+        $this->transfer = new TransferModel();
     }
 
     public function updateOrCreate()
     {
-        DB::beginTransaction();
         $this->validate();
-        $this->transaction->save();
-        DB::commit();
-        $this->notify('Transaction has been saved successfully!');
+        $this->transfer->save();
+        $this->notify('Transfer has been saved successfully!');
     }
 
     public function toggleAdvancedSearch(): void
@@ -127,11 +126,11 @@ class TraIndex extends Component
     public function getRowsQueryProperty()
     {
         // searching
-        $query = Transcation::query()
-            ->with('order.client');
+        $query = TransferModel::query()
+            ->with('purchase.provider');
 
         $query->when($this->filters['search'] ?? null, function ($query) {
-            $query->whereHas('order.client', function ($query) {
+            $query->whereHas('purchase.provider', function ($query) {
                 $query->search('name', $this->filters['search']);
             });
         });
@@ -143,15 +142,15 @@ class TraIndex extends Component
         $query->when($this->filters['amount_max'] ?? null, function ($query) {
             $query->where('amount', '<=', $this->filters['amount_max']);
         });
-        $query->when($this->filters['date'] ?? null, function ($query) {
+        $query->when($this->filters['date_start'] ?? null, function ($query) {
             $query->whereDate('date', '>', $this->filters['date_start']);
         });
         $query->when($this->filters['date_end'] ?? null, function ($query) {
             $query->where('date', '<=', $this->filters['date_end']);
         });
 
-        $query->when($this->filters['order_id'] ?? null, function ($query) {
-            $query->where('order_id', $this->filters['order_id']);
+        $query->when($this->filters['purchase_id'] ?? null, function ($query) {
+            $query->where('purchase_id', $this->filters['purchase_id']);
         });
         // sorting
         return $this->applySorting($query);
@@ -170,11 +169,13 @@ class TraIndex extends Component
             $this->selectPageRows();
         }
 
-        if (!$this->orders) {
-            $this->orders = Order::select('id')->get();
+        if (!$this->purchases) {
+            $this->purchases = PurchaseModel::query()
+                ->where('status', '!=', OrderStatus::DONE)
+                ->select('id')->get();
         }
 
-        return view('livewire.transaction.tra-index', [
+        return view('livewire.purchase.transfer', [
             'models' => $this->rows,
         ])
             ->extends('layouts.app')
