@@ -105,6 +105,10 @@
                 </x-table.heading>
 
                 <x-table.heading>
+                    Image
+                </x-table.heading>
+
+                <x-table.heading>
                     Name
                 </x-table.heading>
 
@@ -168,6 +172,14 @@
                     <x-table.row wire:key="{{ $model->id }}">
                         <x-table.cell>
                             <x-base.checkbox wire:model="selected" value="{{ $model->id }}"/>
+                        </x-table.cell>
+                        <x-table.cell>
+                            @if(isset($model->image) && $model->image)
+                                <a target="_blank" href="{{  getImageUrl($model->image) }}">
+                                    <x-base.avatar imageUrl="{{ getImageUrl($model->image) }}" />
+                                </a>
+
+                            @endif
                         </x-table.cell>
                         <x-table.cell>{{ $model->material->name ?? '-' }}</x-table.cell>
                         <x-table.cell>{{ $model->color }}</x-table.cell>
@@ -257,8 +269,20 @@
                                   name="ore.weight"></x-form.input>
                 </x-form.form-group>
 
-
-
+                <div class="col-md-4">
+                    <x-form.label title="Image"/>
+                    @if(isset($model->image) && $model->image)
+                        <x-base.avatar imageUrl="{{ getImageUrl($model->image) }}"/>
+                    @endif
+                </div>
+                <x-form.form-group col="8">
+                    <input type="file" wire:model="image" name="image">
+                    @if($image)
+                        <img class="card-img-top img-fluid center" height="150px" width="150px"
+                             src="{{ $image->temporaryUrl() }}"/>
+                    @endif
+                    @error('image') {{ $message }} @enderror
+                </x-form.form-group>
 
             </x-base.grid>
         </x-slot>

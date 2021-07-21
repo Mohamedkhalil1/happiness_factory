@@ -20,6 +20,7 @@ class CreateOresTable extends Migration
             $table->string('width');
             $table->string('weight');
             $table->integer('quantity')->default(0);
+            $table->string('image')->nullable();
             $table->foreignId('material_id')->constrained();
             $table->timestamps();
         });

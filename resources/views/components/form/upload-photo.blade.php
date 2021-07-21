@@ -1,4 +1,4 @@
-@props(['name'])
+@props(['name' => 'avatar'])
 <div wire:ignore>
     <input {{ $attributes }} type="file" class="image-resize-filepond">
     <span class="text-danger">
@@ -40,7 +40,7 @@
             FilePond.setOptions({
                 server: {
                     process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-                    @this.upload('avatar', file, load, error, progress);
+                    @this.upload('{{$name}}', file, load, error, progress);
                     },
                     revert : (filename, load) => {
                     @this.removeUpload('{{$name}}', filename, load);

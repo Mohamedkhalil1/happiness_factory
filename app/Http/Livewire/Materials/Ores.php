@@ -6,7 +6,6 @@ use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
-use App\Http\Livewire\InventoriesFilters\WithInventoriesFilters;
 use App\Models\Material;
 use App\Models\Ore;
 use Livewire\Component;
@@ -15,15 +14,28 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Ores extends Component
 {
-    use WithFileUploads, WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows, WithInventoriesFilters;
+    use WithFileUploads, WithPerPagePagination, WithSorting, WithBulkActions, WithCachedRows;
 
     public string $pageTitle = 'Ores';
     public bool $showAdvancedSearch = false;
     public $materials;
     public Ore $ore;
 
+    public $image;
+
     protected $queryString = ['sortField', 'sortDirection', 'filters'];
     protected $listeners = ['refreshOres', '$refresh'];
+
+    public array $filters = [
+        'search'       => null,
+        'quantity_min' => null,
+        'quantity_max' => null,
+        'color'        => null,
+        'height'       => null,
+        'width'        => null,
+        'weight'       => null,
+    ];
+
 
     public function rules(): array
     {
@@ -33,6 +45,7 @@ class Ores extends Component
             'ore.width'       => 'required|string|max:255',
             'ore.weight'      => 'required|string|max:255',
             'ore.quantity'    => 'required|integer|max:999999',
+            'image'           => 'nullable|image|max:1024',
             'ore.material_id' => 'required|exists:materials,id',
         ];
     }
@@ -70,6 +83,8 @@ class Ores extends Component
     public function updateOrCreate()
     {
         $this->validate();
+
+        $this->image && $this->ore->image = $this->image->store('/', 'files');
         $this->ore->save();
         $this->notify('Ore has been saved successfully!');
     }
@@ -99,9 +114,9 @@ class Ores extends Component
         });
         //filters
 
-         $query->when($this->filters['quantity_min'] ?? null, function ($query) {
-             $query->where('quantity', '>', $this->filters['quantity_min']);
-         });
+        $query->when($this->filters['quantity_min'] ?? null, function ($query) {
+            $query->where('quantity', '>', $this->filters['quantity_min']);
+        });
         $query->when($this->filters['quantity_max'] ?? null, function ($query) {
             $query->where('quantity', '<=', $this->filters['quantity_max']);
         });
@@ -111,10 +126,10 @@ class Ores extends Component
             $query->whereIn('color', $colors);
         });
 
-         $query->when($this->filters['height'] ?? null, function ($query) {
-             $sizes = explode(',', $this->filters['height']);
-             $query->whereIn('height', $sizes);
-         });
+        $query->when($this->filters['height'] ?? null, function ($query) {
+            $sizes = explode(',', $this->filters['height']);
+            $query->whereIn('height', $sizes);
+        });
 
         $query->when($this->filters['width'] ?? null, function ($query) {
             $sizes = explode(',', $this->filters['width']);
