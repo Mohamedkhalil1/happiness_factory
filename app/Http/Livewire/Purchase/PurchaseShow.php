@@ -21,7 +21,7 @@ class PurchaseShow extends Component
 
     public function mount($id)
     {
-        $this->purchase = PurchaseModel::find($id);
+        $this->purchase = PurchaseModel::findOrFail($id);
         $this->pageTitle = 'Purchase - ' . $id;
         $this->activeProvider = true;
         $this->transfers = $this->purchase->transfers()->paginate();

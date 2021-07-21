@@ -117,6 +117,14 @@
                         'url'    => route('materials.ores.buy'),
                         'active' => isActive('materials.ores.buy') ||  isActive('materials.ores.purchase.show')
                     ],
+
+                     [
+                        'title'  => 'Transfers',
+                        'url'    => route('materials.transfers.index'),
+                        'active' => isActive('materials.transfers.index')
+                    ],
+
+
                 ]
             "></x-menu-item>
 
