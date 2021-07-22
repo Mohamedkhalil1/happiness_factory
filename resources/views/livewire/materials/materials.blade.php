@@ -158,7 +158,7 @@
                     </x-form.input>
                 </x-form.form-group>
                 <div class="col-md-4">
-                    <x-form.label title="About you"/>
+                    <x-form.label title="Description"/>
                 </div>
                 <x-form.form-group col="8">
                     <x-form.textarea wire:model="material.description" title="description"/>
