@@ -10,6 +10,7 @@ use App\Http\Livewire\Client\CliIndex;
 use App\Http\Livewire\Dashboard;
 use App\Http\Livewire\Employee\EmpIndex;
 use App\Http\Livewire\Inventory\InvIndex;
+use App\Http\Livewire\Materials\Accessories;
 use App\Http\Livewire\Materials\Materials;
 use App\Http\Livewire\Materials\Ores;
 use App\Http\Livewire\Order\OrdCreate;
@@ -108,6 +109,7 @@ Route::group([
         Route::get('/buy/ores', Purchase::class)->name('ores.buy');
         Route::get('/ores/purchase/{id}', PurchaseShow::class)->name('ores.purchase.show');
         Route::get('/transfers', Transfer::class)->name('transfers.index');
+        Route::get('/accessories', Accessories::class)->name('accessories.index');
     });
 
 

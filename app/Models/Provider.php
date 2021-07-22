@@ -21,17 +21,22 @@ class Provider extends Model
 
     public function getTotalAmountAttribute()
     {
-        return $this->purchases->sum('total_amount');
+        return $this->purchases->sum('total_amount') + $this->accessories->sum('amount');
     }
 
     public function getPaidAmountAttribute()
     {
-        return $this->purchases->sum('paid_amount');
+        return $this->purchases->sum('paid_amount') + $this->accessories->sum('amount');
     }
 
     public function getRemainAttribute()
     {
         return $this->purchases->sum('remain');
+    }
+
+    public function accessories(): HasMany
+    {
+        return $this->hasMany(Accessory::class);
     }
 
     public function purchases(): HasMany
