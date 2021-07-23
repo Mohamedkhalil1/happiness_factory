@@ -83,12 +83,12 @@ class Dashboard extends Component
         $this->popularEmployees = Employee::query()
             ->with('category')
             ->join('attendances', 'attendances.employee_id', 'employees.id')
-            ->select('employees.id', 'employees.name', 'employees.type', 'employees.avatar',
+            ->select('employees.id', 'employees.name', 'employees.nickname', 'employees.type', 'employees.avatar',
                 'employees.phone', 'employees.address', 'employees.worked_date', 'employees.social_status'
                 , 'employees.salary')
             ->selectRaw('sum(attended) as attendance_count')
             ->orderByDesc('attendance_count')
-            ->groupBy('employees.id', 'employees.name', 'employees.type', 'employees.avatar',
+            ->groupBy('employees.id', 'employees.name', 'employees.nickname', 'employees.type', 'employees.avatar',
                 'employees.phone', 'employees.address', 'employees.worked_date', 'employees.social_status'
                 , 'employees.salary')
             ->take(10)
@@ -100,12 +100,12 @@ class Dashboard extends Component
         $this->unpoplularEmployees = Employee::query()
             ->with('category')
             ->join('attendances', 'attendances.employee_id', 'employees.id')
-            ->select('employees.id', 'employees.name', 'employees.type', 'employees.avatar',
+            ->select('employees.id', 'employees.name', 'employees.nickname', 'employees.type', 'employees.avatar',
                 'employees.phone', 'employees.address', 'employees.worked_date', 'employees.social_status'
                 , 'employees.salary')
             ->selectRaw('sum(attended) as attendance_count')
             ->orderBy('attendance_count')
-            ->groupBy('employees.id', 'employees.name', 'employees.type', 'employees.avatar',
+            ->groupBy('employees.id', 'employees.name', 'employees.nickname', 'employees.type', 'employees.avatar',
                 'employees.phone', 'employees.address', 'employees.worked_date', 'employees.social_status'
                 , 'employees.salary')
             ->take(10)

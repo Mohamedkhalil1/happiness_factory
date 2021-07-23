@@ -109,7 +109,7 @@ class AttIndex extends Component
         });
 
         //filters
-        $query = $query->when($this->filters['status'] ?? null, function ($query) {
+        $query = $query->when(isset($this->filters['status']) , function ($query) {
             $query->where('attended', $this->filters['status']);
         });
 

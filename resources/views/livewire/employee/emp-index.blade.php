@@ -390,7 +390,7 @@
 
     <x-base.modal id="attendance" size="lg" formAction="storeAttendance">
         <x-slot name="title">
-            Employee
+            Attendance
         </x-slot>
         <x-slot name="content">
             <x-base.grid>
