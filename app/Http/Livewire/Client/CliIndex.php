@@ -33,6 +33,11 @@ class CliIndex extends Component
         'amount_max' => null,
     ];
 
+    public function mount()
+    {
+        $this->client = new Client();
+    }
+
     public function rules(): array
     {
         return [
@@ -119,19 +124,19 @@ class CliIndex extends Component
 
         $query->when($this->filters['amount_min'] ?? null, function ($query) {
             $query->select(
-                'clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','avatar'
+                'clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date', 'avatar'
                 , DB::raw('SUM(orders.amount_after_discount) as amount_sum'))
                 ->join('orders', 'orders.client_id', '=', 'clients.id')
-                ->groupBy('clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','clients.avatar')
+                ->groupBy('clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date', 'clients.avatar')
                 ->havingRaw('amount_sum > ?', [$this->filters['amount_min']]);
         });
 
         $query->when($this->filters['amount_max'] ?? null, function ($query) {
             $query->select(
-                'clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','avatar'
+                'clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date', 'avatar'
                 , DB::raw('SUM(orders.amount_after_discount) as amount_sum'))
                 ->join('orders', 'orders.client_id', '=', 'clients.id')
-                ->groupBy('clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date','clients.avatar')
+                ->groupBy('clients.id', 'clients.name', 'clients.type', 'clients.address', 'clients.phone', 'clients.worked_date', 'clients.avatar')
                 ->havingRaw('amount_sum <= ?', [$this->filters['amount_max']]);
         });
 

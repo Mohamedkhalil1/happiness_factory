@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\AmountType;
+use App\Observers\SalaryObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,18 +19,6 @@ class Salary extends Model
         'employee_id',
         'total',
     ];
-    protected $appends = ['total'];
-
-
-    public function getTotalAttribute()
-    {
-        if (!isset($this->attributes['with'])) {
-            return 0;
-        }
-        if ($this->attributes['with'] == AmountType::NORMAL) return $this->amount;
-        else if ($this->attributes['with'] == AmountType::INCREASE) return $this->amount + $this->with_value;
-        else if ($this->attributes['with'] == AmountType::DECREASE) return $this->amount - $this->with_value;
-    }
 
     public function employee(): BelongsTo
     {
