@@ -105,7 +105,7 @@ Route::group([
         'as'     => 'materials.',
     ], function () {
         Route::get('/', Materials::class)->name('index');
-        Route::get('/ores', Ores::class)->name('ores.index');
+//        Route::get('/ores', Ores::class)->name('ores.index');
         Route::get('/buy/ores', Purchase::class)->name('ores.buy');
         Route::get('/ores/purchase/{id}', PurchaseShow::class)->name('ores.purchase.show');
         Route::get('/transfers', Transfer::class)->name('transfers.index');

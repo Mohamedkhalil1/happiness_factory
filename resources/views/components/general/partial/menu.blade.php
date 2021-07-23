@@ -113,21 +113,22 @@
                         'url'    => route('materials.index'),
                         'active' => isActive('materials.index')
                     ],
-                    [
-                        'title'  => 'Ores',
-                        'url'    => route('materials.ores.index'),
-                        'active' => isActive('materials.ores.index')
-                    ],
-                     [
-                        'title'  => 'Accessories',
-                        'url'    => route('materials.accessories.index'),
-                        'active' => isActive('materials.accessories.index')
-                    ],
+                    // [
+                    //     'title'  => 'Ores',
+                    //     'url'    => route('materials.ores.index'),
+                    //     'active' => isActive('materials.ores.index')
+                    // ],
                     [
                         'title'  => 'Buy Ores',
                         'url'    => route('materials.ores.buy'),
                         'active' => isActive('materials.ores.buy') ||  isActive('materials.ores.purchase.show')
                     ],
+                     [
+                        'title'  => 'Buy Accessories',
+                        'url'    => route('materials.accessories.index'),
+                        'active' => isActive('materials.accessories.index')
+                    ],
+
 
                      [
                         'title'  => 'Transfers',

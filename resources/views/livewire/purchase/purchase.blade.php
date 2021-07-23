@@ -84,17 +84,6 @@
                             </x-form.form-group>
 
                             <x-form.form-group col="6">
-                                <x-form.label title="Min Quantity"/>
-                                <x-form.input lazy name="filters.quantity_min" type="text"
-                                />
-                            </x-form.form-group>
-                            <x-form.form-group col="6">
-                                <x-form.label title="Max Quantity"/>
-                                <x-form.input lazy name="filters.quantity_max" type="text"
-                                />
-                            </x-form.form-group>
-
-                            <x-form.form-group col="6">
                                 <span wire:click="resetFilters" class="text-black"
                                       style="float:right;margin-top:29px;cursor: pointer">
                                     Reset Filters
@@ -138,9 +127,24 @@
                     Amount
                 </x-table.heading>
 
-                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('quantity')" id="status"
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('color')" id="color"
                                  :direction="$sortDirection">
-                    Quantity
+                    Color
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('height')" id="height"
+                                 :direction="$sortDirection">
+                    Height(m)
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('width')" id="width"
+                                 :direction="$sortDirection">
+                    Width(m)
+                </x-table.heading>
+
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('weight')" id="weight"
+                                 :direction="$sortDirection">
+                    Weight(kg)
                 </x-table.heading>
 
 
@@ -170,7 +174,7 @@
 
                 @if($selectedPage)
                     <x-table.row>
-                        <x-table.cell class="text-black" style="background: #4b455042" colspan="11">
+                        <x-table.cell class="text-black" style="background: #4b455042" colspan="12">
                             <div class="text-black">
                                 @unless($selectedAll)
                                     <div>
@@ -206,9 +210,7 @@
                             </a>
                         </x-table.cell>
 
-                        <x-table.cell>{{ $model->ore->material->name ?? '' }}
-                            <div class="text-muted">({{ $model->ore->companite() }})</div>
-                        </x-table.cell>
+                        <x-table.cell>{{ $model->material->name ?? '' }}</x-table.cell>
 
                         <x-table.cell>{{ $model->provider->name ?? '' }}</x-table.cell>
 
@@ -221,7 +223,10 @@
                             </x-base.badge>
                         </x-table.cell>
                         <x-table.cell>{{ formatMoney($model->amount) }}</x-table.cell>
-                        <x-table.cell>{{ $model->quantity }}</x-table.cell>
+                        <x-table.cell>{{ $model->color }}</x-table.cell>
+                        <x-table.cell>{{ $model->height }}</x-table.cell>
+                        <x-table.cell>{{ $model->width }}</x-table.cell>
+                        <x-table.cell>{{ $model->weight }}</x-table.cell>
                         <x-table.cell>{{ formatMoney($model->total_amount) }}</x-table.cell>
                         <x-table.cell>{{ formatMoney($model->paid_amount) }}</x-table.cell>
                         <x-table.cell>{{ formatMoney($model->remain) }}</x-table.cell>
@@ -259,7 +264,7 @@
                     </x-table.row>
                 @empty
                     <x-table.row>
-                        <x-table.cell colspan="11">
+                        <x-table.cell colspan="12">
                             <div class="text-center text-muted text-uppercase">
                                 No purchases found...
                             </div>
@@ -284,14 +289,14 @@
                     <x-form.label required title="Date"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.date-time id="date" name="purchase.date" type="text"/>
+                    <x-form.date-time required id="date" name="purchase.date" type="text"/>
                 </x-form.form-group>
 
                 <div class="col-md-4">
                     <x-form.label required title="Materials"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="material_id" wire:model="material_id">
+                    <x-base.uselect  required name="material_id" wire:model="purchase.material_id">
                         <x-select.option value="0">Select Material</x-select.option>
                         @foreach($materials as $material)
                             <x-select.option value="{{ $material->id }}">{{ $material->name }}</x-select.option>
@@ -300,22 +305,10 @@
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label required title="Ores"/>
-                </div>
-                <x-form.form-group col="8">
-                    <x-base.uselect name="purchase.ore_id" wire:model="purchase.ore_id" :disabled="$edit">
-                        <x-select.option value="0">Select Ore</x-select.option>
-                        @foreach($ores as $ore)
-                            <x-select.option disbaled value="{{ $ore->id }}">{{ $ore->companite() }}</x-select.option>
-                        @endforeach
-                    </x-base.uselect>
-                </x-form.form-group>
-
-                <div class="col-md-4">
                     <x-form.label required title="Providers"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-base.uselect name="purchase.provider_id" wire:model="purchase.provider_id">
+                    <x-base.uselect required name="purchase.provider_id" wire:model="purchase.provider_id">
                         <x-select.option value="0">Select Provider</x-select.option>
                         @foreach($providers as $provider)
                             <x-select.option value="{{ $provider->id }}">{{ $provider->name }}</x-select.option>
@@ -324,7 +317,7 @@
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label required title="Price(for one piece)"/>
+                    <x-form.label title="Price(for one piece)"/>
                 </div>
                 <x-form.form-group col="8">
                     <x-form.input type="number" required lazy class="round"
@@ -332,12 +325,35 @@
                 </x-form.form-group>
 
                 <div class="col-md-4">
-                    <x-form.label required title="Quantity"/>
+                    <x-form.label title="color"/>
                 </div>
                 <x-form.form-group col="8">
-                    <x-form.input type="number" required lazy class="round"
-                                  name="purchase.quantity"></x-form.input>
+                    <x-form.input type="text" lazy class="round"
+                                  name="purchase.color" inputGroupText="STRING"></x-form.input>
                 </x-form.form-group>
+
+                <div class="col-md-4">
+                    <x-form.label title="Height"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input type="number"  lazy class="round"
+                                  name="purchase.height" inputGroupText="METER"></x-form.input>
+                </x-form.form-group>
+                <div class="col-md-4">
+                    <x-form.label title="Width"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input type="number"  lazy class="round"
+                                  name="purchase.width" inputGroupText="METER"></x-form.input>
+                </x-form.form-group>
+                <div class="col-md-4">
+                    <x-form.label title="Weight"/>
+                </div>
+                <x-form.form-group col="8">
+                    <x-form.input type="number"  lazy class="round"
+                                  name="purchase.weight" inputGroupText="KG"></x-form.input>
+                </x-form.form-group>
+
 
                 <div class="col-md-4">
                     <x-form.label required title="Amount"/>

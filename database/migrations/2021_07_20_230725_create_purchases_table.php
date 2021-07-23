@@ -15,11 +15,14 @@ class CreatePurchasesTable extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ore_id')->constrained();
+            $table->foreignId('material_id')->constrained();
             $table->foreignId('provider_id')->constrained();
             $table->date('date');
             $table->decimal('amount', 8, 2);
-            $table->integer('quantity');
+            $table->string('color')->nullable();
+            $table->decimal('height', 8, 3)->nullable();
+            $table->decimal('width', 8, 3)->nullable();
+            $table->decimal('weight', 8, 3)->nullable();
             $table->decimal('total_amount', 8, 2);
             $table->decimal('paid_amount', 8, 2)->default(0);
             $table->decimal('remain', 8, 2);

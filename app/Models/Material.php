@@ -14,14 +14,6 @@ class Material extends Model
         'name',
         'description',
     ];
-    protected $appends = [
-        'quantity',
-    ];
-
-    public function getQuantityAttribute()
-    {
-        return $this->ores->sum('quantity');
-    }
 
     public function ores(): HasMany
     {

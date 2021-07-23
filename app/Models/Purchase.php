@@ -14,7 +14,7 @@ class Purchase extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ore_id',
+        'material_id',
         'provider_id',
         'date',
         'amount',
@@ -23,6 +23,10 @@ class Purchase extends Model
         'paid_amount',
         'remain',
         'status',
+        'color',
+        'height',
+        'width',
+        'weight',
     ];
 
     protected static function booted()
@@ -30,9 +34,9 @@ class Purchase extends Model
         self::observe(PurchaseObserver::class);
     }
 
-    public function ore(): BelongsTo
+    public function material(): BelongsTo
     {
-        return $this->belongsTo(Ore::class);
+        return $this->belongsTo(Material::class);
     }
 
     public function provider(): BelongsTo
