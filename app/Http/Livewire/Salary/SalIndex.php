@@ -2,12 +2,14 @@
 
 namespace App\Http\Livewire\Salary;
 
+use App\Enums\AmountType;
 use App\Http\Livewire\Datatable\WithBulkActions;
 use App\Http\Livewire\Datatable\WithCachedRows;
 use App\Http\Livewire\Datatable\WithPerPagePagination;
 use App\Http\Livewire\Datatable\WithSorting;
 use App\Models\Employee;
 use App\Models\Salary;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -36,11 +38,12 @@ class SalIndex extends Component
     public function rules(): array
     {
         return [
-            'salary.amount'      => 'required|numeric|max:99999999',
-            'salary.with'        => 'nullable|integer|between:1,3',
-            'salary.with_value'  => 'nullable|numeric|max:99999999',
-            'salary.date'        => 'required|date',
-            'salary.employee_id' => 'required|integer|exists:employees,id',
+            'salary.amount'       => 'required|numeric|max:99999999',
+            'salary.with'         => 'nullable|integer|between:1,3',
+            'salary.with_value'   => 'nullable|numeric|max:99999999',
+            'salary.date'         => 'required|date',
+            'salary.employee_id'  => 'required|integer|exists:employees,id',
+            'salary.total_amount' => 'nullable',
         ];
     }
 
@@ -86,12 +89,22 @@ class SalIndex extends Component
 
     public function updateOrCreate()
     {
+        DB::beginTransaction();
         $this->validate();
         if (!$this->salary->with) {
             $this->salary->with_value = 0;
             $this->salary->with = 1;
+            $this->salary->total_amount = $this->salary->amount;
+        }
+        if ($this->salary->with == AmountType::NORMAL) {
+            $this->salary->total_amount = $this->salary->amount;
+        } else if ($this->salary->with == AmountType::INCREASE) {
+            $this->salary->total_amount = $this->salary->amount + $this->salary->with_value;
+        } else if ($this->salary->with == AmountType::DECREASE) {
+            $this->salary->total_amount = $this->salary->amount - $this->salary->with_value;
         }
         $this->salary->save();
+        DB::commit();
         $this->notify('Salary has been saved successfully!');
     }
 

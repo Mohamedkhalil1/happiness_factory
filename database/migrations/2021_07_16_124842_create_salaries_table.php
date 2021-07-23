@@ -10,9 +10,10 @@ class CreateSalariesTable extends Migration
     {
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
-            $table->integer('amount');
+            $table->decimal('amount', 8, 2);
             $table->tinyInteger('with')->default(1);
-            $table->decimal('with_value', 8,2)->nullable();
+            $table->decimal('with_value', 8, 2)->nullable();
+            $table->decimal('total_amount', 8, 2)->default(0);
             $table->date('date');
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

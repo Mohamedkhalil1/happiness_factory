@@ -199,9 +199,9 @@
                             </x-base.badge>
                         </x-table.cell>
                         <x-table.cell>{{ $model->phone }}</x-table.cell>
-                        <x-table.cell>{{ $model->total_amount }}</x-table.cell>
-                        <x-table.cell>{{ $model->paid_amount }}</x-table.cell>
-                        <x-table.cell>{{ $model->remain }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->total_amount)  }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->paid_amount)  }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->remain)  }}</x-table.cell>
                         <x-table.cell>{{ $model->address }}</x-table.cell>
                         <x-table.cell>{{ formatDate($model->worked_date) }}</x-table.cell>
 

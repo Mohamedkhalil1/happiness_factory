@@ -7,7 +7,7 @@ namespace App\Enums;
 class AttendanceTypes extends BaseEnum
 {
     const ATTENDED = 1;
-    const ABSENT = 2;
+    const ABSENT = 0;
 
     protected static function labels(): array
     {

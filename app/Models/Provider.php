@@ -19,6 +19,12 @@ class Provider extends Model
         'details',
     ];
 
+    protected $appends = [
+        'total_amount',
+        'Paid_amount',
+        'Remain',
+    ];
+
     public function getTotalAmountAttribute()
     {
         return $this->purchases->sum('total_amount') + $this->accessories->sum('amount');

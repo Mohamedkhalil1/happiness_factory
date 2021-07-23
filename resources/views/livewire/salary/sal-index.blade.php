@@ -129,8 +129,9 @@
                     With amount
                 </x-table.heading>
 
-                <x-table.heading>
-                    Total
+                <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('total_amount')" id="name"
+                                 :direction="$sortDirection">
+                    Total Amount
                 </x-table.heading>
 
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('date')" id="date"
@@ -190,7 +191,7 @@
                             </x-base.badge>
                         </x-table.cell>
                         <x-table.cell>{{ formatMoney($model->with_value) }}</x-table.cell>
-                        <x-table.cell>{{ formatMoney($model->total) }}</x-table.cell>
+                        <x-table.cell>{{ formatMoney($model->total_amount) }}</x-table.cell>
                         <x-table.cell>{{ formatDate($model->date) }}</x-table.cell>
 
 
