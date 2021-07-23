@@ -26,7 +26,7 @@
         </x-slot>
     </x-design.statistics>
 
-    <x-design.statistics icon="iconly-boldBag" color="red">
+    <x-design.statistics icon="iconly-boldProfile" color="red">
         <x-slot name="name">
             Providers No.
         </x-slot>
@@ -35,7 +35,7 @@
         </x-slot>
     </x-design.statistics>
 
-    <x-design.statistics icon="iconly-boldDocument" color="purple">
+    <x-design.statistics icon="iconly-boldBag" color="purple">
         <x-slot name="name">
             Products
         </x-slot>
@@ -91,10 +91,10 @@
 
     <x-design.statistics icon="iconly-boldWallet" color="green">
         <x-slot name="name">
-            Ores No.
+            Ore Operations No.
         </x-slot>
         <x-slot name="value">
-            {{  \App\Models\Ore::query()->count() }} Ores
+            {{  \App\Models\Transfer::query()->count() }} Ores
         </x-slot>
     </x-design.statistics>
 

@@ -57,10 +57,6 @@
                     Name
                 </x-table.heading>
 
-                <x-table.heading>
-                    Quantity
-                </x-table.heading>
-
                 <x-table.heading style="cursor: pointer" :sortable="true" wire:click="sortBy('description')"
                                  id="description"
                                  :direction="$sortDirection">
@@ -108,10 +104,6 @@
 
                         <x-table.cell>
                             {{ $model->name }}
-                        </x-table.cell>
-
-                        <x-table.cell>
-                            {{ $model->quantity }}
                         </x-table.cell>
 
                         <x-table.cell>{{ $model->description }} </x-table.cell>

@@ -23,8 +23,6 @@ class Purchase extends Component
     public bool $showAdvancedSearch = false;
     protected $materials;
     protected $providers;
-    protected $ores = [];
-    public $material_id;
     public PurchaseModel $purchase;
     public Transfer $transfer;
     public int $purchaseId;
@@ -36,8 +34,6 @@ class Purchase extends Component
         'search'       => null,
         'amount_min'   => null,
         'amount_max'   => null,
-        'quantity_min' => null,
-        'quantity_max' => null,
         'date_start'   => null,
         'date_end'     => null,
         'status'       => null,
@@ -46,12 +42,14 @@ class Purchase extends Component
     public function rules(): array
     {
         return [
-            'material_id'           => 'required|exists:materials,id',
-            'purchase.ore_id'       => 'required|exists:ores,id',
+            'purchase.material_id'  => 'required|exists:materials,id',
             'purchase.provider_id'  => 'required|exists:providers,id',
             'purchase.date'         => 'required|date',
+            'purchase.color'        => 'nullable|string|max:255',
+            'purchase.height'       => 'nullable|numeric|max:9999999',
+            'purchase.width'        => 'nullable|numeric|max:9999999',
+            'purchase.weight'       => 'nullable|numeric|max:9999999',
             'purchase.amount'       => 'required|numeric|min:1|max:999999',
-            'purchase.quantity'     => 'required|integer|min:1|max:9999999',
             'purchase.total_amount' => 'required|numeric|min:1|max:999999',
             'transfer.date'         => 'nullable',
             'transfer.amount'       => 'nullable',
@@ -68,28 +66,25 @@ class Purchase extends Component
 
     public function updatedPurchaseAmount($value)
     {
-        if ($this->purchase->quantity) {
-            $this->purchase->total_amount = $this->purchase->quantity * $value;
+        if ($this->purchase->height) {
+            $this->purchase->total_amount = $this->purchase->height * $value;
+        } elseif ($this->purchase->weight) {
+            $this->purchase->total_amount = $this->purchase->weight * $value;
         }
     }
 
-    public function updatedPurchaseQuantity($value)
+    public function updatedPurchaseHeight($value)
     {
         if ($this->purchase->amount) {
             $this->purchase->total_amount = $this->purchase->amount * $value;
         }
     }
 
-
-    public function updatedMaterialId($value)
+    public function updatedPurchaseWeight($value)
     {
-        $material = Material::find($value);
-        if ($material) {
-            $this->ores = $material->ores;
-            $this->notify('Ores are given.');
-            return;
+        if ($this->purchase->amount) {
+            $this->purchase->total_amount = $this->purchase->amount * $value;
         }
-        $this->notify('Material is not found');
     }
 
     public function updatedFilters()
@@ -119,7 +114,7 @@ class Purchase extends Component
             }
             $purchase->delete();
             $this->resetFilters();
-            $this->notify('Order has been deleted successfully!');
+            $this->notify('Purchase has been deleted successfully!');
 
         }
     }
@@ -136,7 +131,6 @@ class Purchase extends Component
         $this->useCachedRows();
         $this->edit = true;
         $this->purchase = PurchaseModel::find($purchaseId);
-        $this->material_id = $this->purchase->ore->material_id;
     }
 
     public function updateOrCreate()
@@ -192,14 +186,14 @@ class Purchase extends Component
     {
         // with
         $query = PurchaseModel::query()
-            ->with(['ore.material', 'provider']);
+            ->with(['material', 'provider']);
 
         //searching
         $query->when($this->filters['search'] ?? null, function ($query) {
             $query->whereHas('provider', function ($query) {
                 $query->search('name', $this->filters['search']);
             })
-                ->orWhereHas('ore.material', function ($query) {
+                ->orWhereHas('material', function ($query) {
                     $query->search('name', $this->filters['search']);
                 });
         });
@@ -212,12 +206,6 @@ class Purchase extends Component
             $query->where('total_amount', '<=', $this->filters['amount_max']);
         });
 
-        $query->when($this->filters['quantity_min'] ?? null, function ($query) {
-            $query->where('quantity', '>', $this->filters['quantity_min']);
-        });
-        $query->when($this->filters['quantity_max'] ?? null, function ($query) {
-            $query->where('quantity', '<=', $this->filters['quantity_max']);
-        });
 
         $query->when($this->filters['quantity_min'] ?? null, function ($query) {
             $query->where('quantity', '>', $this->filters['quantity_min']);
@@ -260,17 +248,11 @@ class Purchase extends Component
         if (!$this->providers) {
             $this->providers = Provider::select('id', 'name')->get();
         }
-        if (!($this->ores) && $this->material_id) {
-            $material = $this->materials->find($this->material_id);
-            if ($material) {
-                $this->ores = $material->ores;
-            }
-        }
+
         return view('livewire.purchase.purchase', [
             'models'    => $this->rows,
             'materials' => $this->materials,
             'providers' => $this->providers,
-            'ores'      => $this->ores,
         ])
             ->extends('layouts.app')
             ->section('content');
